@@ -1,0 +1,15 @@
+[
+  {
+    "question": "In PHP 8.x, which feature enables passing function arguments based on their parameter names rather than positional order?",
+    "code": "setcookie(name: 'session', expires: time() + 3600, secure: true);",
+    "options": [
+      "Named Arguments",
+      "Match Expressions",
+      "Nullsafe Operator",
+      "Constructor Promotion"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Named arguments allow passing arguments to a function by parameter name, making calls self-documenting and order-independent."
+  }
+]

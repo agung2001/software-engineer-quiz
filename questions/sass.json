@@ -1,0 +1,15 @@
+[
+  {
+    "question": "In modern Dart Sass, which directive is recommended over '@import' to load mixins and variables with dedicated namespaces?",
+    "code": "@use 'theme' as *;",
+    "options": [
+      "@use",
+      "@forward",
+      "@include",
+      "@require"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "@use loads members into a local namespace and ensures each stylesheet is only compiled once, replacing the legacy global @import."
+  }
+]

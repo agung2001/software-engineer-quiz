@@ -1,0 +1,15 @@
+[
+  {
+    "question": "What is the primary reason for using multi-stage builds in a production Dockerfile?",
+    "code": "FROM golang:1.22 AS builder\n...\nFROM alpine:latest\nCOPY --from=builder /app/server /server",
+    "options": [
+      "Drastically minimizes final production image size by excluding build tools and SDKs",
+      "Enables running multiple containers in the same PID namespace",
+      "Accelerates container boot time by preloading swap memory",
+      "Allows Docker to run without root daemon privileges"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Multi-stage builds leave compiler SDKs and build caches behind, copying only the compiled binary into a clean minimal base like Alpine or Distroless."
+  }
+]

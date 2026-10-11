@@ -1,0 +1,71 @@
+name: Generate Quiz Index
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'questions/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate index.json
+        run: |
+          node -e '
+          const fs = require("fs");
+          const path = require("path");
+
+          const questionsDir = path.join(process.cwd(), "questions");
+          if (!fs.existsSync(questionsDir)) {
+            console.error("questions directory not found");
+            process.exit(1);
+          }
+
+          const files = fs.readdirSync(questionsDir).filter(f => f.endsWith(".json"));
+          const index = {
+            tools: {},
+            totalQuestions: 0,
+            updatedAt: new Date().toISOString()
+          };
+
+          for (const file of files.sort()) {
+            const toolName = path.basename(file, ".json");
+            const fullPath = path.join(questionsDir, file);
+            try {
+              const data = JSON.parse(fs.readFileSync(fullPath, "utf8"));
+              if (Array.isArray(data)) {
+                index.tools[toolName] = {
+                  file: "questions/" + file,
+                  count: data.length
+                };
+                index.totalQuestions += data.length;
+              }
+            } catch (err) {
+              console.error("Error parsing " + file, err);
+            }
+          }
+
+          fs.writeFileSync("index.json", JSON.stringify(index, null, 2) + "\n");
+          console.log(`Generated index.json with ${Object.keys(index.tools).length} tools and ${index.totalQuestions} questions.`);
+          '
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-generate quiz index.json [skip ci]" && git push)

@@ -1,0 +1,15 @@
+[
+  {
+    "question": "In Bash scripts, what does the 'set -e' (errexit) option do when encountered?",
+    "code": "#!/usr/bin/env bash\nset -euo pipefail",
+    "options": [
+      "Immediately exits the script if any command returns a non-zero exit code",
+      "Suppresses standard error output from child processes",
+      "Exports all declared variables to subshells automatically",
+      "Enables extended regular expressions in pattern matching"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'set -e' instructs Bash to exit immediately if any pipeline command fails, preventing silent cascading errors."
+  }
+]

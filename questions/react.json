@@ -1,0 +1,15 @@
+[
+  {
+    "question": "Which React Hook should be used when you need to read layout from the DOM and synchronously apply changes before browser repaint?",
+    "code": "useLayoutEffect(() => {\n  const { height } = ref.current.getBoundingClientRect();\n}, []);",
+    "options": [
+      "useLayoutEffect",
+      "useEffect",
+      "useInsertionEffect",
+      "useSyncExternalStore"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "useLayoutEffect fires synchronously immediately after DOM mutations before browser layout/paint, preventing visual flickering."
+  }
+]

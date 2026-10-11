@@ -1,0 +1,14 @@
+[
+  {
+    "question": "Which PostgreSQL index type is specifically designed for indexing text search vectors and array containment (@>)?",
+    "options": [
+      "GIN (Generalized Inverted Index)",
+      "B-Tree",
+      "Hash Index",
+      "BRIN"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "GIN indexes map elements to lists of row IDs containing those elements, making them ideal for full-text search documents and JSONB arrays."
+  }
+]

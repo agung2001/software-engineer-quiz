@@ -1,0 +1,14 @@
+[
+  {
+    "question": "Which Redis data structure is optimal for implementing an accurate real-time rate limiter with sliding expiration?",
+    "options": [
+      "Sorted Sets (ZSET)",
+      "Strings",
+      "Bitmaps",
+      "HyperLogLog"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "Sorted Sets (ZSET) store timestamped request entries scored by epoch time, allowing atomic removal of stale requests and instant count validation."
+  }
+]

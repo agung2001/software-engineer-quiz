@@ -1,0 +1,15 @@
+[
+  {
+    "question": "In Vim normal mode, which command substitutes all occurrences of 'foo' with 'bar' throughout the entire file?",
+    "code": ":%s/foo/bar/g",
+    "options": [
+      ":%s/foo/bar/g",
+      ":replace foo bar",
+      ":g/foo/s//bar/",
+      ":w !sed 's/foo/bar/g'"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "':%s/foo/bar/g' targets all lines (%) and replaces every occurrence on each line globally (g)."
+  }
+]

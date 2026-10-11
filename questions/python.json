@@ -1,0 +1,14 @@
+[
+  {
+    "question": "What is the primary benefit of Python's 'asyncio' and async/await syntax over standard multithreading for network I/O?",
+    "options": [
+      "It completely bypasses Python's Global Interpreter Lock (GIL)",
+      "Cooperative multitasking handles thousands of concurrent I/O sockets with low memory footprint",
+      "It compiles Python code directly to C bytecode",
+      "It automatically distributes workload across all GPU cores"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "asyncio uses a single-threaded event loop with non-blocking sockets, allowing massive concurrency without the CPU overhead of thread context switches."
+  }
+]

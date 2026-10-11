@@ -1,0 +1,14 @@
+[
+  {
+    "question": "What Webpack capability removes unused export code from the final production bundle by relying on ES module static analysis?",
+    "options": [
+      "Tree Shaking",
+      "Scope Hoisting",
+      "Code Splitting",
+      "Hot Module Replacement"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Tree shaking analyzes static import/export statements to omit unreferenced exports from production bundles, minimizing download weight."
+  }
+]

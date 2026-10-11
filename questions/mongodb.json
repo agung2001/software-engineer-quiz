@@ -1,0 +1,15 @@
+[
+  {
+    "question": "In MongoDB's Aggregation Framework, which pipeline stage is used to filter documents in a manner equivalent to find()?",
+    "code": "db.orders.aggregate([\n  { $match: { status: 'completed' } }\n])",
+    "options": [
+      "$match",
+      "$filter",
+      "$project",
+      "$group"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "$match filters documents so that only matching items proceed to the next pipeline stage, efficiently utilizing indexes if placed early."
+  }
+]

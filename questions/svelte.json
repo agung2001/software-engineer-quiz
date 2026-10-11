@@ -1,0 +1,14 @@
+[
+  {
+    "question": "How does Svelte achieve high performance without relying on a Virtual DOM at runtime?",
+    "options": [
+      "It compiles components at build time into targeted vanilla JavaScript that surgically updates the DOM",
+      "It runs a lightweight WebAssembly reconciliation engine in a Web Worker",
+      "It intercepts DOM mutations using native MutationObserver",
+      "It renders everything directly into an offscreen HTML5 Canvas"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Svelte is a build-time compiler that generates precise code to update the exact DOM nodes when state changes, eliminating virtual DOM diffing overhead."
+  }
+]

@@ -1,0 +1,15 @@
+[
+  {
+    "question": "What will be printed to the console given this JavaScript microtask queue scenario?",
+    "code": "console.log(1);\nsetTimeout(() => console.log(2), 0);\nPromise.resolve().then(() => console.log(3));\nconsole.log(4);",
+    "options": [
+      "1, 2, 3, 4",
+      "1, 4, 3, 2",
+      "1, 4, 2, 3",
+      "3, 1, 4, 2"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Synchronous code runs first (1, 4), then Microtasks from Promise callbacks resolve (3), and finally Macrotasks from setTimeout execute (2)."
+  }
+]

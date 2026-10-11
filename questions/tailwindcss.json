@@ -1,0 +1,15 @@
+[
+  {
+    "question": "In modern Tailwind CSS, how do you target dark mode styles when the .dark class is applied to the root element?",
+    "code": "<div class=\"bg-white dark:bg-zinc-900 text-black dark:text-white\"></div>",
+    "options": [
+      "By prefixing classes with 'dark:'",
+      "Using @media (theme: dark)",
+      "By writing custom CSS variables in globals.css",
+      "By wrapping components in <TailwindDark>"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "Tailwind's 'dark:' variant applies styles when the dark class (or system preference) is active, enabling clean declarative themes."
+  }
+]

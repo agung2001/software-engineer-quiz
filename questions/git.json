@@ -1,0 +1,15 @@
+[
+  {
+    "question": "Which Git command copies a specific commit from one branch and applies it onto your current working branch?",
+    "code": "git cherry-pick <commit-hash>",
+    "options": [
+      "git cherry-pick",
+      "git rebase --onto",
+      "git merge --squash",
+      "git patch-apply"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "git cherry-pick allows you to select one or more specific commits by hash and apply their changes directly to HEAD without merging the branch."
+  }
+]

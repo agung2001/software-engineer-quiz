@@ -1,0 +1,15 @@
+[
+  {
+    "question": "In Laravel Eloquent, how do you prevent the notorious N+1 query problem when retrieving related models?",
+    "code": "$users = User::with('posts')->get();",
+    "options": [
+      "Using eager loading with the 'with()' method",
+      "Using DB::raw('SELECT *')",
+      "Disabling query logging in AppServiceProvider",
+      "Using lazy collections ($users->lazy())"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Eager loading (User::with('posts')) queries all related posts in a single IN (...) query, reducing database roundtrips from N+1 down to 2."
+  }
+]

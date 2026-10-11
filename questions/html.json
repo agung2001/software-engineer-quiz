@@ -1,0 +1,28 @@
+[
+  {
+    "question": "Which HTML5 semantic element is best suited for content that is self-contained and could be independently syndicated?",
+    "code": "<article>\n  <h2>Independent Post</h2>\n  <p>Content...</p>\n</article>",
+    "options": [
+      "<section>",
+      "<article>",
+      "<aside>",
+      "<main>"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "<article> represents an independent, self-contained piece of content (like a blog post, news item, or widget), whereas <section> is for thematic grouping."
+  },
+  {
+    "question": "What is the purpose of the 'loading=\"lazy\"' attribute on modern HTML5 <img> tags?",
+    "code": "<img src=\"hero.webp\" loading=\"lazy\" alt=\"Banner\" />",
+    "options": [
+      "Delays image loading until it enters the viewport",
+      "Compresses the image using browser WebP encoder",
+      "Forces low-resolution placeholder first",
+      "Loads the image via Web Workers"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "Native lazy loading defers downloading offscreen images until the user scrolls near them, dramatically improving initial PageSpeed and LCP."
+  }
+]

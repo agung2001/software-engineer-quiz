@@ -1,0 +1,15 @@
+[
+  {
+    "question": "Which SQLite journaling mode allows readers to access the database concurrently while a writer is writing?",
+    "code": "PRAGMA journal_mode=WAL;",
+    "options": [
+      "WAL (Write-Ahead Logging)",
+      "DELETE",
+      "MEMORY",
+      "OFF"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "WAL mode records changes to a separate -wal file, allowing concurrent readers without locking the database file against reads while writing."
+  }
+]

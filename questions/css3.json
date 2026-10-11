@@ -1,0 +1,27 @@
+[
+  {
+    "question": "What modern CSS layout feature allows components to style themselves based on their direct parent container's width rather than the viewport?",
+    "code": "@container (min-width: 450px) {\n  .card-title { font-size: 1.5rem; }\n}",
+    "options": [
+      "CSS Subgrid",
+      "Container Queries",
+      "Media Queries Level 5",
+      "Flexbox Wrapping"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "CSS Container Queries (@container) allow micro-layouts inside reusable cards to adapt dynamically based on the space allocated by their container."
+  },
+  {
+    "question": "Which CSS property promotion strategy ensures buttery smooth 120 FPS animations without triggering layout reflows?",
+    "options": [
+      "Animating 'width' and 'height' with transition",
+      "Animating 'transform' and 'opacity' exclusively",
+      "Using 'float: left' with CSS keyframes",
+      "Setting 'position: absolute' with top/left changes"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'transform' and 'opacity' are handled directly by the GPU compositor layer without triggering DOM layout or paint recalculations."
+  }
+]

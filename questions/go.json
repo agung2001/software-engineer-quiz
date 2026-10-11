@@ -1,0 +1,15 @@
+[
+  {
+    "question": "In Go, what built-in mechanism is used to safely communicate and share data between concurrent Goroutines without explicit mutex locking?",
+    "code": "ch := make(chan int)\ngo func() { ch <- 42 }()\nval := <-ch",
+    "options": [
+      "Channels",
+      "Pointers",
+      "Global atomic counters",
+      "Shared memory maps"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Go follows the CSP philosophy: 'Do not communicate by sharing memory; instead, share memory by communicating' via Channels."
+  }
+]

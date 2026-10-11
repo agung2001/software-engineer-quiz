@@ -1,0 +1,15 @@
+[
+  {
+    "question": "What TypeScript utility type constructs a type with all properties of T set to optional?",
+    "code": "interface User { id: string; email: string; }\ntype DraftUser = Partial<User>;",
+    "options": [
+      "Required<T>",
+      "Omit<T, K>",
+      "Partial<T>",
+      "Readonly<T>"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Partial<T> returns a type where every key in T is marked as optional (?:)."
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "question": "Which MySQL storage engine is the default in modern MySQL and provides full ACID compliance and row-level locking?",
+    "options": [
+      "InnoDB",
+      "MyISAM",
+      "Memory",
+      "NDB Cluster"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "InnoDB is the standard transactional engine in MySQL, offering ACID compliance, foreign key constraints, and row-level concurrency."
+  }
+]

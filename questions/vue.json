@@ -1,0 +1,15 @@
+[
+  {
+    "question": "In Vue 3 Composition API, what is the key conceptual difference between ref() and reactive()?",
+    "code": "const count = ref(0)\nconst state = reactive({ count: 0 })",
+    "options": [
+      "ref() accepts primitives and objects via a .value wrapper, while reactive() only takes objects with deep proxying",
+      "reactive() can only be used in Options API",
+      "ref() mutations do not trigger reactivity in template render",
+      "reactive() requires manual dependency tracking via watchEffect"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "ref() wraps any value (including primitives) in a reactive object exposing .value, whereas reactive() directly proxies an object or collection."
+  }
+]

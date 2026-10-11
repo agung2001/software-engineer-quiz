@@ -1,0 +1,14 @@
+[
+  {
+    "question": "What C library does Node.js utilize behind the scenes to power its non-blocking asynchronous event loop across operating systems?",
+    "options": [
+      "libuv",
+      "glibc",
+      "OpenSSL",
+      "V8 internal scheduler"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "libuv is the cross-platform C library that handles Node.js's event loop, thread pool, async I/O, file system operations, and network sockets."
+  }
+]
