@@ -28,16 +28,16 @@ Used by [Agung Sundoro's Portfolio](https://agungsundoro.com).
 
 ### 1. Index
 ```http
-GET https://raw.githubusercontent.com/agung2001/software-engineer-quiz/main/index.json
+GET https://raw.githubusercontent.com/agung2001/software-engineering-quiz/main/index.json
 ```
 
 ### 2. Specific Tool Questions
 ```http
-GET https://raw.githubusercontent.com/agung2001/software-engineer-quiz/main/questions/{tool}.json
+GET https://raw.githubusercontent.com/agung2001/software-engineering-quiz/main/questions/{tool}.json
 ```
 Example:
 ```http
-GET https://raw.githubusercontent.com/agung2001/software-engineer-quiz/main/questions/vue.json
+GET https://raw.githubusercontent.com/agung2001/software-engineering-quiz/main/questions/vue.json
 ```
 
 ## 📝 Question Schema
