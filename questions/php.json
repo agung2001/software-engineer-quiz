@@ -11,5 +11,248 @@
     "correct": 0,
     "difficulty": "Intermediate",
     "explanation": "Named arguments allow passing arguments to a function by parameter name, making calls self-documenting and order-independent."
+  },
+  {
+    "question": "What is the key functional difference between a 'match' expression and a 'switch' statement in PHP 8?",
+    "code": "$result = match ($status) {\n  200, 201 => 'Success',\n  404 => 'Not Found',\n  default => 'Error',\n};",
+    "options": [
+      "'match' executes asynchronously across background threads",
+      "'match' performs strict identity comparison (===), returns a value directly, and has no fallthrough",
+      "'switch' performs strict comparison, while 'match' performs loose coercion (==)",
+      "'match' cannot have a default fallback case"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Unlike 'switch', which uses loose '==' comparison and requires explicit 'break' statements, 'match' uses strict '===' comparisons, returns an evaluation result, and forbids fallthrough."
+  },
+  {
+    "question": "How does Constructor Property Promotion in PHP 8 reduce boilerplate code in class definitions?",
+    "code": "class User {\n  public function __construct(\n    public readonly string $id,\n    public string $email,\n  ) {}\n}",
+    "options": [
+      "Makes all properties accessible publicly via magic getters",
+      "Automatically generates database migration columns for properties",
+      "Combines property declaration and assignment directly into the constructor parameter signature",
+      "Instantiates class properties as lazy proxies"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Constructor property promotion allows declaring class properties with visibility (public/protected/private) directly inside the __construct argument list, automatically binding arguments to properties."
+  },
+  {
+    "question": "What happens when using the Nullsafe operator '?->' on an expression that evaluates to null?",
+    "code": "$country = $session?->user?->getAddress()?->country;",
+    "options": [
+      "Logs an E_WARNING warning to the server error log",
+      "Throws a fatal TypeError immediately",
+      "Returns an empty string '' as fallback",
+      "The entire chain short-circuits and evaluates to null without throwing an Error"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "The Nullsafe operator '?->' evaluates the left-hand operand; if it is null, execution of the rest of the chain is aborted and null is returned, preventing 'Call to a member function on null'."
+  },
+  {
+    "question": "What effect does adding 'declare(strict_types=1);' have at the top of a PHP file?",
+    "code": "<?php\ndeclare(strict_types=1);\n\nfunction add(int $a, int $b): int {\n  return $a + $b;\n}",
+    "options": [
+      "Enforces strict type checking for function calls made within that specific file, rejecting type coercions (like string to int)",
+      "Applies strict type checking globally across all files in the entire project",
+      "Disables all dynamic variables and eval() execution",
+      "Forces variables to be declared with explicit types"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'declare(strict_types=1)' operates per-file. For calls originating from that file, function arguments and return types must strictly match the declared types without implicit type coercion."
+  },
+  {
+    "question": "What are PHP 8 Attributes (replacing legacy PHPDoc annotations)?",
+    "code": "#[Route('/api/users', methods: ['GET'])]\npublic function listUsers(): JsonResponse { ... }",
+    "options": [
+      "Runtime database decorators for Active Record models",
+      "Native structured metadata on classes, methods, and properties inspectable via Reflection API",
+      "Compiler directives that inline PHP bytecode into C",
+      "Custom CSS selectors for server-side HTML rendering"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "PHP 8 Attributes are native, first-class language metadata enclosed in '#[...]'. Unlike PHPDoc comments, they are syntactically parsed by the PHP engine and queried via Reflection."
+  },
+  {
+    "question": "What concurrency primitive was introduced in PHP 8.1 to support cooperative multitasking and non-blocking I/O?",
+    "options": [
+      "Green Threads",
+      "Goroutines",
+      "Fibers",
+      "Async Streams"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "Fibers represent full-stack, interruptible functions (coroutines) in PHP 8.1, enabling async frameworks (like Revolt, Amp, and ReactPHP) to manage concurrent execution without callback hell."
+  },
+  {
+    "question": "What is the primary role of OPcache in a PHP production environment?",
+    "options": [
+      "Maintains persistent HTTP/2 WebSocket connections",
+      "Stores database query results in RAM like Memcached",
+      "Minifies HTML and compresses CSS assets",
+      "Caches precompiled script bytecode in shared memory to eliminate parsing and compilation on subsequent requests"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "OPcache improves PHP performance by storing precompiled script bytecode in shared memory, eliminating the need for PHP to load, tokenize, and compile scripts on every HTTP request."
+  },
+  {
+    "question": "How do Generators with the 'yield' keyword help handle large datasets in PHP?",
+    "code": "function getRows($file) {\n  while ($row = fgetcsv($file)) {\n    yield $row;\n  }\n}",
+    "options": [
+      "Streams data iteratively on-demand without loading the entire dataset into memory at once",
+      "Compresses arrays in memory using zlib algorithms",
+      "Executes the iteration on a separate CPU thread",
+      "Caches database records in Redis automatically"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Generators allow writing functions that act like iterators. Using 'yield', values are produced one at a time as requested, maintaining a near-constant memory footprint regardless of dataset size."
+  },
+  {
+    "question": "What magic method is invoked in PHP when an object is called as if it were a function?",
+    "code": "class Invoker {\n  public function __invoke($arg) { return $arg * 2; }\n}\n$obj = new Invoker();\necho $obj(5);",
+    "options": [
+      "__call()",
+      "__invoke()",
+      "__run()",
+      "__execute()"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "The '__invoke()' magic method is triggered when a script tries to call an object as a function (e.g. '$obj(args)')."
+  },
+  {
+    "question": "How does a 'readonly class' behave in PHP 8.2?",
+    "code": "readonly class ApiResponse {\n  public function __construct(\n    public int $status,\n    public string $message\n  ) {}\n}",
+    "options": [
+      "The class cannot be extended by subclasses",
+      "The class cannot be instantiated more than once (singleton)",
+      "All properties of the class are implicitly marked as readonly and dynamic properties are strictly forbidden",
+      "Methods inside the class cannot return values"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "In PHP 8.2, declaring a class as 'readonly' automatically marks all instance properties as 'readonly' and prevents dynamic property creation, enforcing total object immutability."
+  },
+  {
+    "question": "What is the PSR-4 standard in the PHP ecosystem?",
+    "options": [
+      "A logging interface specification for PSR-3 loggers",
+      "A coding style standard for whitespace and brace indentation",
+      "An HTTP message interface specification for requests and responses",
+      "An autoloading standard that maps namespace prefixes directly to base directory file paths"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "PSR-4 is the autoloading standard established by PHP-FIG that defines rules for mapping fully qualified namespace names to physical file paths on disk."
+  },
+  {
+    "question": "What does the spaceship operator '<=>' return when comparing two values in PHP?",
+    "code": "echo 5 <=> 10;\necho 10 <=> 10;\necho 15 <=> 10;",
+    "options": [
+      "-1 when left is less, 0 when equal, and 1 when left is greater",
+      "A boolean true or false based on value equality",
+      "The numeric difference between left and right",
+      "1 when left is smaller, -1 when left is greater"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "The spaceship operator ($a <=> $b) performs three-way comparison, returning -1 if $a < $b, 0 if $a == $b, and 1 if $a > $b, commonly used in custom sort callbacks."
+  },
+  {
+    "question": "What is the recommended modern function for securely hashing passwords in PHP?",
+    "code": "$hash = password_hash($password, PASSWORD_ARGON2ID);",
+    "options": [
+      "hash('sha256', $password)",
+      "password_hash()",
+      "crypt() with manual salt",
+      "openssl_digest()"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'password_hash()' creates a cryptographically secure password hash using strong algorithms (Bcrypt or Argon2id) with automatic secure salt generation and work factor configuration."
+  },
+  {
+    "question": "How are conflicts resolved between two traits providing a method with the exact same name in a PHP class?",
+    "code": "class User {\n  use TraitA, TraitB {\n    TraitA::log insteadof TraitB;\n    TraitB::log as logB;\n  }\n}",
+    "options": [
+      "The last trait listed in the 'use' statement overrides previous ones",
+      "PHP automatically executes both methods in declaration order",
+      "Using the 'insteadof' operator to select one, and optionally 'as' to alias the other",
+      "Trait conflicts cannot be resolved and cause an uncatchable compile error"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "When two traits insert a method with identical names, PHP requires explicit resolution in the class body using 'insteadof' to designate which method to use, with optional 'as' aliasing."
+  },
+  {
+    "question": "What is the difference between passing an argument by value versus by reference in PHP?",
+    "code": "function modify(&$data) { $data[] = 'new'; }",
+    "options": [
+      "By value requires strict type declarations, whereas by reference does not",
+      "By reference duplicates the variable in memory",
+      "By reference is only permitted for array data types",
+      "By reference (prefixed with '&') modifies the original variable directly; by value works on an isolated copy"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Prefixing a parameter with '&' passes it by reference, allowing the function to modify the caller's variable in place without triggering PHP's copy-on-write allocation."
+  },
+  {
+    "question": "What is an Intersection Type in PHP 8.1?",
+    "code": "function process(Countable&Iterator $collection): void { ... }",
+    "options": [
+      "Enforces that an argument must satisfy all specified types simultaneously",
+      "Allows the argument to be either of the specified types",
+      "Merges two array interfaces into a single associative array",
+      "Validates that two classes share a common parent class"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Intersection types (e.g. 'Countable&Iterator') require a passed value to satisfy every listed type constraint at the same time, unlike Union types ('string|int') which require satisfying at least one."
+  },
+  {
+    "question": "How does PHP handle object assignment '$b = $a' by default?",
+    "options": [
+      "$b creates a deep clone of $a with separate memory addresses",
+      "$b receives a copy of the object identifier pointing to the same underlying object instance",
+      "$b creates a shallow clone duplicating scalar fields only",
+      "$b locks $a against further write mutations"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "In PHP, object variables contain an object identifier (reference pointer). Assigning '$b = $a' copies the identifier, meaning both variables refer to the identical object instance. Use 'clone' to duplicate an object."
+  },
+  {
+    "question": "What PHP function safely escapes output strings to prevent Cross-Site Scripting (XSS) in HTML templates?",
+    "code": "$safe = htmlspecialchars($input, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');",
+    "options": [
+      "addslashes()",
+      "strip_tags()",
+      "htmlspecialchars()",
+      "urlencode()"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'htmlspecialchars()' converts special characters (like <, >, &, \", ') into HTML entities, preventing browser HTML injection and XSS attacks."
+  },
+  {
+    "question": "What does the 'final' keyword do when placed on a PHP class or method?",
+    "code": "final class PaymentProcessor { ... }",
+    "options": [
+      "Enforces that the class must be declared as a singleton",
+      "Prevents properties inside the class from being modified at runtime",
+      "Marks the class for destruction when script execution completes",
+      "Prevents the class from being inherited or the method from being overridden by subclasses"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Applying 'final' to a class prevents any child class from extending it. Applying 'final' to a method prevents child classes from overriding that specific method."
   }
 ]

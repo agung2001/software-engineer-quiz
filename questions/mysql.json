@@ -10,5 +10,239 @@
     "correct": 0,
     "difficulty": "Beginner",
     "explanation": "InnoDB is the standard transactional engine in MySQL, offering ACID compliance, foreign key constraints, and row-level concurrency."
+  },
+  {
+    "question": "What is the primary architectural difference between a Clustered Index and a Secondary Index in InnoDB?",
+    "options": [
+      "Clustered indexes are stored in RAM, whereas Secondary indexes are stored on disk",
+      "The Clustered index leaf nodes store the actual row data, while Secondary index leaf nodes store the primary key values",
+      "A table can have multiple clustered indexes but only one secondary index",
+      "Secondary indexes store hash tables rather than B-Trees"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "InnoDB organizes tables around the primary key as a clustered index. Leaf nodes contain the complete row data. Secondary indexes store the indexed column values plus the corresponding primary key pointer."
+  },
+  {
+    "question": "What is the default Transaction Isolation Level in MySQL InnoDB?",
+    "options": [
+      "READ UNCOMMITTED",
+      "READ COMMITTED",
+      "REPEATABLE READ",
+      "SERIALIZABLE"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "MySQL defaults to REPEATABLE READ. Under InnoDB, this level uses MVCC and Next-Key locking to prevent both non-repeatable reads and phantom reads."
+  },
+  {
+    "question": "In MySQL 'EXPLAIN' query execution plans, which join 'type' represents the worst possible performance?",
+    "code": "EXPLAIN SELECT * FROM orders WHERE customer_id = 42;",
+    "options": [
+      "ref",
+      "index (Full Index Scan)",
+      "range",
+      "ALL (Full Table Scan)"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'type: ALL' indicates a full table scan, where MySQL must read every single row in the table to satisfy the query, indicating missing or unused indexes."
+  },
+  {
+    "question": "What is a 'Covering Index' in MySQL?",
+    "options": [
+      "An index that contains all columns required by the query (SELECT, WHERE, ORDER BY), avoiding table data lookups",
+      "An index that automatically covers all foreign key constraints",
+      "An index encrypted with AES-256 at the storage level",
+      "A full-text index that indexes every column in a table"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "A covering index satisfies the query entirely from the B-Tree index structure alone, indicated by 'Using index' in EXPLAIN's Extra column, bypassing costly row lookups."
+  },
+  {
+    "question": "Why is 'utf8mb4' strongly recommended over legacy 'utf8' (utf8mb3) in MySQL?",
+    "options": [
+      "'utf8mb4' compresses strings using 50% less disk space",
+      "Legacy 'utf8' only supports up to 3 bytes per character, failing on 4-byte UTF-8 emojis and complex international symbols",
+      "'utf8' does not support case-insensitive comparisons",
+      "Modern MySQL 8.0 completely deprecated and deleted the utf8 collation library"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "The original MySQL 'utf8' implementation only supported up to 3-byte characters. Standard UTF-8 requires up to 4 bytes. Using 'utf8mb4' allows storing emojis and supplementary multi-lingual plane characters safely."
+  },
+  {
+    "question": "How does InnoDB prevent Phantom Reads in its default REPEATABLE READ isolation level?",
+    "options": [
+      "Using pessimistic two-phase locking on all table rows",
+      "Locking the entire table with an exclusive table lock",
+      "Using Next-Key Locking (a combination of record locks and gap locks)",
+      "Converting all SELECT statements into SELECT ... FOR UPDATE"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "Next-Key locking locks the index record and the 'gap' before the record, preventing concurrent transactions from inserting new rows that would match the search condition (phantoms)."
+  },
+  {
+    "question": "What is the primary role of the MySQL Binary Log (binlog)?",
+    "options": [
+      "Logging all incoming client connections and failed passwords",
+      "Caching executed queries in RAM to accelerate read throughput",
+      "Storing compiled stored procedures and triggers",
+      "Recording all DDL and DML data modifications for replication to replicas and point-in-time backup recovery"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "The binlog contains 'events' describing database modifications (statement-based or row-based) and is fundamental for master-replica replication and restoring backups to an exact point in time."
+  },
+  {
+    "question": "What server configuration parameter controls the amount of memory allocated to InnoDB for caching data pages and indexes?",
+    "options": [
+      "innodb_buffer_pool_size",
+      "innodb_cache_ram",
+      "key_buffer_size",
+      "query_cache_size"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'innodb_buffer_pool_size' specifies the size of the memory area where InnoDB caches table data and indexes. In dedicated database servers, it is typically set to 50%-75% of total system RAM."
+  },
+  {
+    "question": "Why does paginating deep datasets using 'LIMIT 1000000, 20' suffer from severe performance degradation?",
+    "code": "SELECT * FROM orders ORDER BY id LIMIT 1000000, 20;",
+    "options": [
+      "MySQL creates a temporary MyISAM table on disk for any LIMIT above 10,000",
+      "MySQL must read and discard the first 1,000,000 rows before returning the 20 requested rows",
+      "The query cache overflows when offsets exceed 32-bit integer limits",
+      "InnoDB locks the entire table during high-offset queries"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Large offsets force the database engine to fetch and discard N rows before delivering the requested batch. Using keyset pagination ('WHERE id > last_seen_id LIMIT 20') resolves this in O(1) time."
+  },
+  {
+    "question": "How does InnoDB handle deadlocks between two concurrent transactions?",
+    "options": [
+      "Aborts both transactions immediately and resets network connections",
+      "Freezes the server until a database administrator manually kills one process",
+      "Automatically detects the deadlock and rolls back the transaction that modified the fewest rows (smallest undo log)",
+      "Serializes both transactions into a synchronous queue"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "InnoDB features automatic deadlock detection (via wait-for graph analysis). It breaks the deadlock by choosing a 'victim' transaction—typically the one with fewer row modifications—and rolling it back."
+  },
+  {
+    "question": "What is the difference between VIRTUAL and STORED Generated Columns in MySQL?",
+    "code": "ALTER TABLE products ADD COLUMN total_price DECIMAL(10,2)\n  AS (price * quantity) STORED;",
+    "options": [
+      "VIRTUAL columns require external cron jobs to recalculate",
+      "VIRTUAL columns can be indexed, while STORED columns cannot",
+      "STORED columns can only store boolean values",
+      "STORED columns are computed and written to disk on write/update; VIRTUAL columns are evaluated on-the-fly when read"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "STORED columns consume physical disk space because their computed values are stored when rows are inserted/updated. VIRTUAL columns consume no storage (except index space if indexed) and are computed upon reading."
+  },
+  {
+    "question": "Which SQL mode in modern MySQL prevents queries that select non-aggregated columns not present in the GROUP BY clause?",
+    "code": "SELECT customer_id, product_name, SUM(amount) FROM sales GROUP BY customer_id;",
+    "options": [
+      "ONLY_FULL_GROUP_BY",
+      "STRICT_TRANS_TABLES",
+      "NO_ENGINE_SUBSTITUTION",
+      "ANSI_QUOTES"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "ONLY_FULL_GROUP_BY requires every column in the SELECT list that is not in an aggregate function to be explicitly included in the GROUP BY clause, conforming to ANSI SQL standards."
+  },
+  {
+    "question": "What does 'Partition Pruning' mean in MySQL partitioned tables?",
+    "options": [
+      "A scheduled cron job deletes partitions older than 90 days",
+      "The query optimizer excludes partitions that cannot contain matching rows from being scanned based on WHERE conditions",
+      "MySQL merges partitions into a single table when disk space is low",
+      "Compressing read-only partitions into gzip archives"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "Partition pruning occurs when the optimizer analyzes query filters (e.g., WHERE created_at >= '2024-01-01') and only scans the specific partition(s) holding relevant data, avoiding scans across other partitions."
+  },
+  {
+    "question": "What is the difference between 'TRUNCATE TABLE' and 'DELETE FROM table' in MySQL?",
+    "options": [
+      "'TRUNCATE' can be filtered with a WHERE clause, while 'DELETE' cannot",
+      "'DELETE' resets the AUTO_INCREMENT counter, whereas 'TRUNCATE' preserves it",
+      "'TRUNCATE' drops and recreates the table (DDL), resetting AUTO_INCREMENT and bypassing row triggers; 'DELETE' removes rows individually (DML)",
+      "'TRUNCATE' executes row-level triggers for each dropped record"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'TRUNCATE TABLE' is a DDL operation that deallocates data pages directly, making it vastly faster than 'DELETE FROM' which logs individual row deletions and fires triggers."
+  },
+  {
+    "question": "What index type does MySQL use by default for standard column indexes in InnoDB?",
+    "options": [
+      "R-Tree",
+      "Hash",
+      "LSM Tree",
+      "B+Tree"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "InnoDB uses B+Tree data structures for primary and secondary indexes. B+Trees keep keys sorted in leaf pages connected by linked lists, enabling fast range scans and equality lookups."
+  },
+  {
+    "question": "What happens when you run 'SELECT ... FOR UPDATE' inside an active InnoDB transaction?",
+    "code": "START TRANSACTION;\nSELECT * FROM inventory WHERE item_id = 5 FOR UPDATE;",
+    "options": [
+      "Acquires an exclusive row-level lock on matching rows, blocking other transactions from modifying or locking them",
+      "Instantly commits the transaction to disk",
+      "Creates a snapshot read without locking",
+      "Updates all matching rows with default values"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'SELECT ... FOR UPDATE' performs a locking read, acquiring an exclusive (X) write lock on matching index records until the current transaction commits or rolls back."
+  },
+  {
+    "question": "What feature should be enabled to identify queries exceeding a specified execution time threshold in production?",
+    "code": "SET GLOBAL slow_query_log = 'ON';\nSET GLOBAL long_query_time = 1.0;",
+    "options": [
+      "General Query Log",
+      "Slow Query Log",
+      "Error Log",
+      "Audit Vault"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "The Slow Query Log logs queries that take longer than 'long_query_time' seconds to execute and require more than 'min_examined_row_limit' row scans, essential for database performance profiling."
+  },
+  {
+    "question": "How does the 'ON DELETE CASCADE' foreign key clause affect child records when the parent record is deleted?",
+    "options": [
+      "Prevents the parent record from being deleted",
+      "Sets the foreign key column in child records to NULL",
+      "Automatically deletes all child records referencing the parent",
+      "Moves child records into a trash table"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'ON DELETE CASCADE' instructs the database engine to automatically delete any child rows that reference the deleted parent row, maintaining referential integrity."
+  },
+  {
+    "question": "What does 'OPTIMIZE TABLE users' perform on an InnoDB table?",
+    "options": [
+      "Creates secondary indexes on all foreign keys",
+      "Converts the table from InnoDB to MyISAM",
+      "Compresses all text columns into zip files",
+      "Rebuilds the table to reclaim unused disk space and updates index statistics"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "In InnoDB, 'OPTIMIZE TABLE' is mapped to 'ALTER TABLE ... FORCE', rebuilding the table into a new clean tablespace file, defragmenting data pages and recalculating index cardinalities."
   }
 ]

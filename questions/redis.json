@@ -10,5 +10,241 @@
     "correct": 0,
     "difficulty": "Advanced",
     "explanation": "Sorted Sets (ZSET) store timestamped request entries scored by epoch time, allowing atomic removal of stale requests and instant count validation."
+  },
+  {
+    "question": "Why is running 'KEYS *' strictly forbidden on production Redis instances?",
+    "options": [
+      "It deletes keys matching wildcard patterns permanently",
+      "It executes in O(N) time on Redis's single-threaded event loop, blocking all other client requests until completion",
+      "It triggers an immediate emergency RDB snapshot on disk",
+      "It drops active TLS connections"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'KEYS *' scans the entire keyspace synchronously. Because Redis processes commands sequentially on its main thread, scanning millions of keys freezes the server for seconds or minutes. Use non-blocking 'SCAN' instead."
+  },
+  {
+    "question": "What is the primary trade-off between Redis RDB snapshots and AOF (Append-Only File) persistence?",
+    "options": [
+      "RDB records can only be restored on identical hardware",
+      "AOF is stored in RAM, whereas RDB is stored in an S3 bucket",
+      "RDB produces compact point-in-time binary dumps with faster recovery, but risks data loss since the last snapshot; AOF logs every write operation for higher durability",
+      "AOF causes 10x higher memory usage than RDB"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "RDB creates compact point-in-time snapshots periodically (fast recovery, but data between snapshots is lost). AOF appends every write command to disk (slower replay, larger files, but much smaller data loss window with fsync=everysec)."
+  },
+  {
+    "question": "What memory eviction policy in Redis evicts the least recently used keys among those with an expiration (TTL) set?",
+    "options": [
+      "noeviction",
+      "allkeys-lru",
+      "volatile-ttl",
+      "volatile-lru"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'volatile-lru' evicts least recently used keys out of the keys that have an expire set, preserving keys without TTL. In contrast, 'allkeys-lru' evicts any key regardless of whether a TTL exists."
+  },
+  {
+    "question": "How do Redis transactions work with 'MULTI', 'EXEC', and 'WATCH'?",
+    "code": "WATCH balance\nMULTI\nDECRBY balance 50\nINCRBY receiver 50\nEXEC",
+    "options": [
+      "Commands queued between MULTI and EXEC run sequentially without interleaving; WATCH provides optimistic locking that aborts EXEC if watched keys mutate",
+      "Transactions provide full rollback support if an individual command fails type validation",
+      "WATCH acquires an exclusive pessimistic lock on the key, blocking other clients from reading",
+      "EXEC executes the commands concurrently across background threads"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "Redis transactions are atomic (queued commands execute sequentially without interruption), but do NOT roll back on runtime command errors. 'WATCH' provides check-and-set optimistic concurrency, aborting if watched keys were modified."
+  },
+  {
+    "question": "What Redis data structure can estimate the cardinality of billions of unique elements (e.g. unique website visitors) using only ~12 KB of memory with a ~0.81% standard error?",
+    "code": "PFADD daily_visitors user_123 user_456\nPFCOUNT daily_visitors",
+    "options": [
+      "Bloom Filter",
+      "HyperLogLog",
+      "Bitmap",
+      "Cuckoo Filter"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "HyperLogLog (via PFADD/PFCOUNT) uses a probabilistic counting algorithm that estimates distinct elements with remarkable precision (~0.81% error) while consuming at most 12 KB of fixed memory."
+  },
+  {
+    "question": "How does Redis Streams differ from standard Redis Pub/Sub?",
+    "options": [
+      "Streams messages can only be consumed once globally across all subscribers",
+      "Pub/Sub supports consumer groups, while Streams does not",
+      "Streams persist messages to disk and support consumer groups and message acknowledgement (ACK); Pub/Sub is fire-and-forget with no history",
+      "Pub/Sub buffers unacknowledged messages for 24 hours"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Pub/Sub delivers messages in real-time to active subscribers; if a client disconnects, the message is lost forever. Redis Streams behaves like an append-only log (similar to Kafka), persisting messages and supporting Consumer Groups and XACK."
+  },
+  {
+    "question": "How do you achieve an atomic, distributed lock safely on a single Redis instance with auto-release timeout?",
+    "code": "SET lock_key unique_token NX PX 30000",
+    "options": [
+      "Using 'MULTI' with 'INCR' and 'EXPIRE'",
+      "Using 'SETNX key value' followed by 'EXPIRE key 30'",
+      "Running 'LOCK key timeout=30'",
+      "Using 'SET key value NX PX <milliseconds>'"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'SET resource_name my_random_token NX PX 30000' is atomic: 'NX' sets the key only if it does not already exist, and 'PX' assigns the millisecond TTL in the exact same command, preventing orphan locks."
+  },
+  {
+    "question": "What is the primary benefit of Redis Pipelining?",
+    "options": [
+      "Sends multiple commands to the Redis server in a single network round-trip without waiting for replies individually",
+      "Splits large hashes across multiple CPU cores",
+      "Encrypts Redis command traffic with TLS 1.3",
+      "Automatically retries failed commands with exponential backoff"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "Pipelining batches multiple client requests into a single network socket write and reads all replies together, dramatically improving throughput by eliminating network Round-Trip Time (RTT) overhead."
+  },
+  {
+    "question": "How many Hash Slots are used in a Redis Cluster to partition keys across master nodes?",
+    "options": [
+      "1,024",
+      "16,384 (evaluated as CRC16(key) % 16384)",
+      "65,536",
+      "256"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "A Redis Cluster partitions the keyspace into 16,384 hash slots. Every key is mapped to a slot using 'CRC16(key) mod 16384', distributed among master nodes in the cluster."
+  },
+  {
+    "question": "In a Redis Cluster, how do you force two different keys to hash to the exact same slot so multi-key operations can succeed?",
+    "code": "SET {user:100}:profile \"...\"\nSET {user:100}:orders \"...\"",
+    "options": [
+      "By configuring cluster-slot-affinity in redis.conf",
+      "By prefixing the keys with the same numeric ID",
+      "By enclosing a common substring in curly braces '{...}' (Hash Tags)",
+      "By executing the commands inside a single MULTI block"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "Redis Cluster supports Hash Tags: if a key contains '{...}', only the text inside the curly braces is hashed for slot computation, ensuring keys with matching hash tags reside on the same cluster node."
+  },
+  {
+    "question": "What Redis feature provides high availability and automatic failover for non-clustered master-replica setups?",
+    "options": [
+      "Redis Keeper",
+      "Redis Coordinator",
+      "Redis Proxy",
+      "Redis Sentinel"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Redis Sentinel is a distributed monitoring system that monitors master and replica instances, detects master failures, and automatically promotes a replica to master while reconfiguring clients."
+  },
+  {
+    "question": "How are Lua scripts and Redis Functions executed in terms of concurrency?",
+    "code": "EVAL \"return redis.call('set', KEYS[1], ARGV[1])\" 1 mykey myvalue",
+    "options": [
+      "Atomically: no other Redis command or script can run while a script is executing",
+      "Asynchronously across background thread pools",
+      "Preemptively with 5ms time-slicing",
+      "Only on read-only replica nodes"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Redis guarantees atomic execution of Lua scripts. While a script is running, the server's main thread is dedicated to it, meaning no other command can mutate data in the middle of the script."
+  },
+  {
+    "question": "What Redis data structure can efficiently track whether millions of users logged in on a specific day using 1 bit per user?",
+    "code": "SETBIT active_users:2024-05-01 10425 1\nBITCOUNT active_users:2024-05-01",
+    "options": [
+      "HyperLogLog",
+      "Bitmaps",
+      "Sorted Sets",
+      "Hashes"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "Bitmaps (implemented on top of Strings) allow setting, getting, and counting individual bits (0 or 1) by integer offset. Tracking 100 million users takes only ~12 MB of memory."
+  },
+  {
+    "question": "How does Redis expire keys that have reached their Time-To-Live (TTL)?",
+    "options": [
+      "Keys are only expired when memory reaches 100% capacity",
+      "A dedicated operating system thread per key with a hardware timer",
+      "A combination of Passive (expired on read access) and Active (periodic random sampling in background) expiration",
+      "Keys are moved to a secondary disk table before deletion"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "Redis uses two methods: passive expiration (checks TTL when a client accesses the key) and active expiration (periodically samples 20 random keys with an expire set, deleting expired ones, repeating until less than 25% are expired)."
+  },
+  {
+    "question": "What is the difference between Redis Lists and Redis Sets?",
+    "options": [
+      "Lists support O(1) membership checks (SISMEMBER), while Sets do not",
+      "Lists are stored in RAM; Sets are stored on disk",
+      "Sets preserve insertion order, while Lists sort items alphabetically",
+      "Lists are ordered collections of strings allowing duplicates; Sets are unordered collections of unique strings"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Lists (LPUSH/RPUSH) maintain sequential insertion order and allow duplicate elements. Sets (SADD/SMEMBERS) contain unique, unordered members with O(1) membership checks via 'SISMEMBER'."
+  },
+  {
+    "question": "In 'INFO memory', what does a 'mem_fragmentation_ratio' significantly greater than 1.5 indicate?",
+    "code": "127.0.0.1:6379> INFO memory\nmem_fragmentation_ratio: 2.1",
+    "options": [
+      "Memory fragmentation: the OS has allocated substantially more physical memory (RSS) than Redis is actually using for data",
+      "Redis has compressed stored data by 50%",
+      "Swap memory is being heavily utilized by the OS kernel",
+      "The AOF rewrite log is buffering commands"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'mem_fragmentation_ratio' is used_memory_rss / used_memory. A ratio > 1.5 indicates memory fragmentation where memory freed by deletes is not returned to the OS. Modern Redis can address this with 'activedefrag yes'."
+  },
+  {
+    "question": "What underlying data structure does Redis use to represent Geospatial coordinates (GEOADD / GEOSEARCH)?",
+    "options": [
+      "R-Tree spatial index",
+      "Sorted Sets (ZSET) storing coordinates encoded as 52-bit Geohashes in the score",
+      "KD-Tree partitioning index",
+      "Binary Quadtree coordinates"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "Redis Geospatial commands store longitude and latitude coordinates encoded into 52-bit integers using the Geohash algorithm, saved directly as scores inside a standard Sorted Set (ZSET)."
+  },
+  {
+    "question": "What is the time complexity of looking up a field in a Redis Hash ('HGET')?",
+    "code": "HGET user:100 email",
+    "options": [
+      "O(log N)",
+      "O(N)",
+      "O(1)",
+      "O(1) only if the hash has fewer than 10 fields, otherwise O(N)"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Hash fields are stored in a hash table (or compact listpack for tiny hashes), providing average O(1) constant time complexity for 'HGET' and 'HSET' operations."
+  },
+  {
+    "question": "Which command removes all keys across all databases in the entire Redis server instance?",
+    "options": [
+      "DROP DATABASE",
+      "FLUSHDB",
+      "PURGE ALL",
+      "FLUSHALL"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'FLUSHALL' clears every key in all numeric databases on the Redis instance. 'FLUSHDB' only clears keys in the currently selected database (e.g. DB 0)."
   }
 ]

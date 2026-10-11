@@ -1,15 +1,257 @@
 [
   {
-    "question": "In modern Tailwind CSS, how do you target dark mode styles when the .dark class is applied to the root element?",
-    "code": "<div class=\"bg-white dark:bg-zinc-900 text-black dark:text-white\"></div>",
+    "question": "What is the primary advantage of Tailwind CSS's Just-in-Time (JIT) compilation engine?",
     "options": [
-      "By prefixing classes with 'dark:'",
-      "Using @media (theme: dark)",
-      "By writing custom CSS variables in globals.css",
-      "By wrapping components in <TailwindDark>"
+      "Generates styles on-demand by scanning source files, enabling arbitrary values and drastically shrinking build times",
+      "Compiles CSS to binary WebAssembly for 60fps rendering",
+      "Injects styles into server-side databases automatically",
+      "Removes the need for HTML markup completely"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "The JIT engine scans template files for class names in real-time, generating only the exact CSS rules used, allowing arbitrary values like 'top-[117px]' without pre-generating massive stylesheets."
+  },
+  {
+    "question": "What mobile-first breakpoint philosophy does Tailwind CSS employ by default?",
+    "options": [
+      "Max-width breakpoints: styles apply on desktop first and scale down with media queries",
+      "Min-width breakpoints: unprefixed utilities apply to mobile, while breakpoint prefixes (md:, lg:) apply at that width and above",
+      "User-Agent sniffing: checks browser headers to render device-specific CSS",
+      "Dynamic viewport height units (dvh) only"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "Tailwind uses mobile-first 'min-width' queries. Utilities without prefixes apply to all screen sizes, while 'md:flex' only activates on screens equal to or wider than the 'md' breakpoint."
+  },
+  {
+    "question": "How do you style a child element based on the hover state of its parent element in Tailwind CSS?",
+    "code": "<div class=\"group p-4 bg-white\">\n  <p class=\"text-black group-hover:text-blue-500\">Title</p>\n</div>",
+    "options": [
+      "Attach a JavaScript event listener on the parent element",
+      "Use 'parent:hover' on the child element",
+      "Mark the parent with the 'group' class and apply 'group-hover:' to the child element",
+      "Use '@apply parent-hover' in a separate CSS file"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Marking a parent element with 'group' enables targeting children based on parent state using modifiers like 'group-hover:', 'group-focus:', and 'group-active:'."
+  },
+  {
+    "question": "How do you style a sibling element based on the state of a preceding sibling (e.g., a checked checkbox)?",
+    "code": "<input type=\"checkbox\" class=\"peer\" />\n<div class=\"hidden peer-checked:block\">Checked content</div>",
+    "options": [
+      "Tailwind cannot style sibling elements",
+      "Mark the following element with 'sibling-checked:'",
+      "Use 'group-checked:' on the container",
+      "Mark the preceding sibling with the 'peer' class and use 'peer-checked:' on the following sibling"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "When an element is marked with 'peer', subsequent siblings can use 'peer-*' modifiers (such as 'peer-checked:', 'peer-focus:') targeting CSS adjacent/general sibling selectors ('~')."
+  },
+  {
+    "question": "What is the purpose of the 'content' array in 'tailwind.config.js'?",
+    "code": "module.exports = {\n  content: ['./src/**/*.{html,js,jsx,ts,tsx,vue}'],\n  theme: { extend: {} },\n};",
+    "options": [
+      "Specifies file paths that Tailwind scans for class names to generate the corresponding CSS utilities",
+      "Defines text strings that should be localized for internationalization",
+      "Lists external CSS stylesheets to be merged during build",
+      "Configures dynamic image assets for CDN upload"
     ],
     "correct": 0,
     "difficulty": "Beginner",
-    "explanation": "Tailwind's 'dark:' variant applies styles when the dark class (or system preference) is active, enabling clean declarative themes."
+    "explanation": "The 'content' array configures the file globs where Tailwind should search for class names. If a file path is omitted, utilities used in that file will not be included in the compiled CSS."
+  },
+  {
+    "question": "How does Tailwind CSS support arbitrary values without creating custom theme entries?",
+    "code": "<div class=\"top-[117px] bg-[#1da1f2] grid-cols-[200px_repeat(auto-fill,1fr)]\"></div>",
+    "options": [
+      "By passing values via the data-style HTML attribute",
+      "By enclosing the exact custom value in square brackets '[...]' directly in the class name",
+      "By using inline CSS styles inside curly braces",
+      "By defining variables inside the :root pseudo-class"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "Tailwind's JIT engine allows arbitrary values using square bracket notation '[value]', dynamically creating on-the-fly utility classes for colors, pixels, calc expressions, and grid templates."
+  },
+  {
+    "question": "How do you adjust the opacity of a background color in modern Tailwind CSS without altering text opacity?",
+    "code": "<div class=\"bg-blue-500/50 text-white\">Transparent background</div>",
+    "options": [
+      "Using 'bg-opacity-50' along with 'text-opacity-100'",
+      "Using the 'opacity-50' utility on the element",
+      "Appending a slash '/' followed by the opacity percentage (e.g. 'bg-blue-500/50')",
+      "Specifying rgba values in an external stylesheet"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Tailwind supports slash syntax for color opacity: 'bg-blue-500/50' sets a 50% alpha channel on the background color via modern CSS color functions, leaving child elements and text unaffected."
+  },
+  {
+    "question": "What is 'Preflight' in Tailwind CSS?",
+    "options": [
+      "A command line tool that tests CSS specificity",
+      "A build step that lints HTML files for broken links before deployment",
+      "A service worker caching strategy for CSS assets",
+      "A set of base reset styles built on modern-normalize that smoothens cross-browser inconsistencies and strips default margins/headings"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "Preflight is Tailwind's opinionated CSS reset based on modern-normalize. It removes margins, normalizes borders, and resets heading font sizes so all styling is done deliberately via utilities."
+  },
+  {
+    "question": "How do you configure Dark Mode in Tailwind CSS to toggle based on a CSS class (like '.dark') on the '<html>' element instead of the system OS preference?",
+    "code": "module.exports = {\n  darkMode: 'class',\n  // ...\n};",
+    "options": [
+      "Set 'darkMode: \"class\"' (or 'selector') in tailwind.config.js",
+      "Set 'darkMode: \"media\"' in tailwind.config.js",
+      "Add 'dark-mode=manual' to HTML head",
+      "Install the @tailwindcss/dark plugin"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Setting 'darkMode: \"class\"' (or 'selector' in Tailwind v3.4+) makes the 'dark:' modifier apply when the parent '<html>' or container has the 'class=\"dark\"' attribute, enabling manual theme toggles."
+  },
+  {
+    "question": "Why does the Tailwind team caution against overusing the '@apply' directive in CSS files?",
+    "code": ".btn {\n  @apply py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md;\n}",
+    "options": [
+      "The browser takes 5x longer to parse @apply rules",
+      "It defeats the benefits of utility-first CSS by re-introducing naming overhead, larger CSS bundle size, and specificity conflicts",
+      "@apply is not supported in the JIT compiler",
+      "@apply prevents JavaScript components from rendering"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Overusing '@apply' recreates standard CSS class naming problems, inflates the final CSS bundle size (utilities can't be reused), and breaks the maintainability of template-driven components."
+  },
+  {
+    "question": "How do you tell Tailwind to preserve specific class names that are generated dynamically via string concatenation in JavaScript?",
+    "code": "module.exports = {\n  safelist: [\n    'bg-red-500',\n    'bg-green-500',\n    { pattern: /bg-(red|green|blue)-(400|500)/ },\n  ],\n};",
+    "options": [
+      "Import them in an @import statement in base.css",
+      "Add 'important: true' to the theme configuration",
+      "List the classes in the 'safelist' configuration array in tailwind.config.js",
+      "Save them in a static text file named .tailwindignore"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Because Tailwind scans source files with raw regex matching, dynamically constructed classes (like '`bg-${color}-500`') are missed. Listing them in 'safelist' forces Tailwind to include them in the build."
+  },
+  {
+    "question": "What official Tailwind plugin provides the 'prose' class for styling rich-text typography (such as rendered Markdown or CMS content)?",
+    "code": "<article class=\"prose lg:prose-xl\">\n  {{ markdownContent }}\n</article>",
+    "options": [
+      "@tailwindcss/content",
+      "@tailwindcss/forms",
+      "@tailwindcss/markdown",
+      "@tailwindcss/typography"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "The '@tailwindcss/typography' plugin provides the 'prose' utility class, which applies beautiful typographic defaults to raw HTML containing headings, paragraphs, blockquotes, and lists."
+  },
+  {
+    "question": "What base measurement does the default Tailwind spacing scale correspond to for 'p-4' or 'w-4'?",
+    "options": [
+      "1rem (16px), because 1 spacing unit equals 0.25rem (4px)",
+      "4px",
+      "4rem (64px)",
+      "40px"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "In Tailwind's default spacing scale, 1 unit equals 0.25rem (4px assuming 16px root font size). Therefore, 'p-4' equals 4 * 0.25rem = 1rem = 16px."
+  },
+  {
+    "question": "How do you apply an Arbitrary Variant to target the 3rd child of an element in Tailwind CSS?",
+    "code": "<li class=\"[&:nth-child(3)]:font-bold\">Item 3</li>",
+    "options": [
+      "Use 'child-3:font-bold'",
+      "Enclose the CSS selector in square brackets with '&' (e.g. '[&:nth-child(3)]:font-bold')",
+      "Use 'nth-child[3]:font-bold'",
+      "Apply '@apply nth-3 { font-bold; }'"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "Tailwind supports arbitrary variants using '[&:selector]:utility' notation. '[&:nth-child(3)]:font-bold' outputs CSS targeting the third child of the element."
+  },
+  {
+    "question": "How do you apply negative margins or positioning in Tailwind CSS?",
+    "code": "<div class=\"-mt-8 -top-4\"></div>",
+    "options": [
+      "Use 'mt-[-8px]' exclusively",
+      "Use 'mt-neg-8'",
+      "Prefix the utility name with a hyphen '-' (e.g. '-mt-8', '-top-4')",
+      "Negative values are not supported in Tailwind"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Prefixing a supported utility with a minus sign '-' (e.g. '-m-4', '-top-2', '-space-x-4') negates the value in the margin, inset, or translation scale."
+  },
+  {
+    "question": "What is the primary difference in how Tailwind CSS v4 configures themes compared to Tailwind v3?",
+    "options": [
+      "Tailwind v4 replaces CSS with WebAssembly runtime canvas rendering",
+      "Tailwind v4 requires an external Python interpreter",
+      "Tailwind v4 requires configuring styles in JSON files only",
+      "Tailwind v4 is configured entirely in CSS using '@theme' directives and native CSS variables, deprecating the JavaScript 'tailwind.config.js' file"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "Tailwind CSS v4 introduces a new engine (Oxide) that is CSS-first. Projects are configured directly in CSS stylesheets using '@theme' and modern CSS variables rather than JavaScript configuration files."
+  },
+  {
+    "question": "What does the 'container' utility do in Tailwind CSS?",
+    "code": "<div class=\"container mx-auto px-4\">...</div>",
+    "options": [
+      "Sets the max-width of an element to match the current breakpoint's min-width",
+      "Creates a flexbox flex container automatically",
+      "Initializes a CSS Container Query context",
+      "Centers the element on the screen vertically and horizontally"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "The 'container' class sets an element's 'max-width' to fixed pixel values based on active responsive breakpoints (e.g. 640px at sm, 768px at md, 1024px at lg)."
+  },
+  {
+    "question": "How do you create a responsive 3-column grid that collapses to 1 column on mobile screens?",
+    "code": "<div class=\"grid grid-cols-1 md:grid-cols-3 gap-4\"></div>",
+    "options": [
+      "grid-cols-3 sm:grid-cols-1",
+      "grid grid-cols-1 md:grid-cols-3",
+      "grid flex-col md:flex-row-3",
+      "grid-3 mobile-1"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "Using mobile-first styling: 'grid grid-cols-1' sets 1 column by default on mobile, while 'md:grid-cols-3' switches to 3 columns on medium screens and larger."
+  },
+  {
+    "question": "What utility class fixes an element's aspect ratio to 16:9 in Tailwind CSS?",
+    "code": "<iframe class=\"w-full aspect-video\" src=\"...\"></iframe>",
+    "options": [
+      "ratio-video",
+      "aspect-16/9",
+      "aspect-video",
+      "h-16-w-9"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'aspect-video' sets 'aspect-ratio: 16 / 9;' on an element, ideal for responsive video embeds and media players. 'aspect-square' provides a 1 / 1 ratio."
+  },
+  {
+    "question": "How do you make an element pulse continuously to indicate a loading skeleton in Tailwind CSS?",
+    "code": "<div class=\"w-32 h-6 bg-gray-200 rounded animate-pulse\"></div>",
+    "options": [
+      "animate-ping",
+      "animate-spin",
+      "animate-bounce",
+      "animate-pulse"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'animate-pulse' applies a gentle fade-in and fade-out keyframe animation, universally used for skeleton loading screens. 'animate-spin' is for rotating spinners."
   }
 ]

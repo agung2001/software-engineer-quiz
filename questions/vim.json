@@ -1,15 +1,245 @@
 [
   {
-    "question": "In Vim normal mode, which command substitutes all occurrences of 'foo' with 'bar' throughout the entire file?",
-    "code": ":%s/foo/bar/g",
+    "question": "Which Vim command deletes all lines across the entire buffer that match a given regular expression pattern?",
     "options": [
-      ":%s/foo/bar/g",
-      ":replace foo bar",
-      ":g/foo/s//bar/",
-      ":w !sed 's/foo/bar/g'"
+      ":g/pattern/d",
+      ":%s/pattern//d",
+      ":d/pattern/g",
+      ":del/pattern/all"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "The global command ':g/pattern/d' searches for all lines matching the pattern and executes the delete action ('d') on them."
+  },
+  {
+    "question": "What is the key difference between a Buffer, a Window, and a Tab Page in Vim?",
+    "options": [
+      "A window holds the file in memory; a tab page is a separate operating system process",
+      "A buffer is the in-memory file; a window is a viewport onto a buffer; a tab page is a collection of windows",
+      "Buffers and tabs are identical concepts in Vim",
+      "A buffer is only created when you split a window vertically"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "In Vim terminology: a buffer is the file loaded in memory, a window is a viewport displaying a buffer (created via splits), and a tab page is a workspace layout holding one or more windows."
+  },
+  {
+    "question": "What does the text object command 'ci\"' do in Normal mode?",
+    "options": [
+      "Deletes the double quotes and the text inside them",
+      "Copies the text between double quotes to the system clipboard",
+      "Deletes the text inside the surrounding double quotes and switches to Insert mode",
+      "Counts instances of double quotes on the current line"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'ci\"' stands for 'change inner quote': it deletes the contents strictly inside the nearest enclosing double quotes and leaves you in Insert mode."
+  },
+  {
+    "question": "How do you record and execute a macro in Vim?",
+    "options": [
+      "Press 'm<register>' to record and ''<register>' to replay",
+      "Press 'Ctrl-r' to record, 'Ctrl-s' to stop, and 'Ctrl-p' to replay",
+      "Type ':macro record' and ':macro play'",
+      "Press 'q<register>' to start recording, perform actions, press 'q' to stop, and run '@<register>' to replay"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'qa' begins recording keystrokes into register 'a'. Pressing 'q' stops recording. '@a' executes the recorded macro once, and '@@' repeats the last played macro."
+  },
+  {
+    "question": "What register in Vim always contains the most recently yanked (copied) text, even after subsequent deletions?",
+    "options": [
+      "Register 0 (\"0)",
+      "The Unnamed register (\"\")",
+      "Register 1 (\"1)",
+      "The Black hole register (\"_)"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Deleting text overwrites the unnamed register '\"'. However, register '0' ('\"0') specifically preserves the most recently yanked text, preventing deletes from overwriting copied items."
+  },
+  {
+    "question": "How do you delete text without overwriting any clipboard or yank registers in Vim?",
+    "options": [
+      "Use 'Ctrl-d' in Visual mode",
+      "Direct the deletion to the Black Hole register using '\"_d'",
+      "Set ':set no-yank-on-delete'",
+      "Use 'x' instead of 'd'"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "The black hole register is named '_'. Prefixing any delete or change command with '\"_' (e.g. '\"_dd' or '\"_dw') discards the text completely without affecting any registers."
+  },
+  {
+    "question": "What does the '.' (dot) command do in Vim Normal mode?",
+    "options": [
+      "Replaces the current character with a period",
+      "Moves the cursor to the end of the sentence",
+      "Repeats the last change made in Normal or Insert mode at the current cursor position",
+      "Finds the next occurrence of the dot character"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "The '.' command repeats the previous editing change (such as 'ciw', 'dd', or an insert sequence), enabling rapid, repetitive edits throughout a file."
+  },
+  {
+    "question": "How do you format an entire buffer using an external shell command like 'jq' directly inside Vim?",
+    "code": ":%!jq .",
+    "options": [
+      ":call system('jq .')",
+      ":sh jq .",
+      ":exec jq %",
+      ":%!jq ."
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "The ':%!' range pipes the entire buffer ('%') through an external shell filter command (like 'jq .' or 'sort') and replaces the buffer contents with the command's stdout."
+  },
+  {
+    "question": "How do you insert text simultaneously across multiple lines using Visual Block mode in Vim?",
+    "options": [
+      "Select lines with 'Ctrl-v', press 'I', type the text, then press 'Esc'",
+      "Select lines with 'Shift-v', press 'a', type text, and press 'Enter'",
+      "Type ':block insert' followed by the text",
+      "Hold 'Alt' and drag the cursor downward"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "In Visual Block mode ('Ctrl-v'), select the vertical column of lines, press 'I' (capital I for insert at beginning), type the desired text, and press '<Esc>'. The text will replicate across all selected lines."
+  },
+  {
+    "question": "What command performs a search-and-replace across the entire file, asking for user confirmation on each substitution?",
+    "options": [
+      ":s/old/new/g",
+      ":%s/old/new/gc",
+      ":g/old/s//new/c",
+      ":find/old/replace/new/all"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "In ':%s/old/new/gc', '%' targets all lines in the file, 'g' replaces all matches on each line (global), and 'c' prompts for interactive confirmation before each replacement."
+  },
+  {
+    "question": "How do you navigate backward and forward through your jump history (cursor positions) in Vim?",
+    "options": [
+      "'[' for older, ']' for newer",
+      "'Ctrl-u' for older, 'Ctrl-d' for newer",
+      "'Ctrl-o' to jump to older cursor positions; 'Ctrl-i' (or Tab) to jump to newer positions",
+      "'Ctrl-z' for undo jump, 'Ctrl-y' for redo jump"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Vim maintains a jump list of locations visited after motions like 'gg', 'G', search queries, or tag jumps. 'Ctrl-o' steps backward (older) in the jump list; 'Ctrl-i' steps forward (newer)."
+  },
+  {
+    "question": "What is the difference between setting a lowercase mark ('ma') versus an uppercase mark ('mA')?",
+    "options": [
+      "Uppercase marks automatically persist to Git commits",
+      "Uppercase marks cannot be deleted",
+      "Lowercase marks record exact character columns; uppercase marks only record line numbers",
+      "Lowercase marks ('a-'z) are local to the current buffer; uppercase marks ('A-'Z) are global across different files"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "Marks 'a' through 'z' are private to the current buffer. Marks 'A' through 'Z' are global marks that allow jumping across different files and buffers using '`A'."
+  },
+  {
+    "question": "What is the difference between navigating with '`a' versus ''a' to jump to mark 'a'?",
+    "options": [
+      "'`a' jumps to the exact line and column of the mark; ''a' jumps to the first non-blank character of the marked line",
+      "''a' deletes the mark after jumping",
+      "'`a' opens the mark in a new split window",
+      "There is no difference in Vim"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "The backtick '`a' positions the cursor precisely on both the row and column where the mark was set. The single quote ''a' positions the cursor at the start of that line."
+  },
+  {
+    "question": "How do you split the current Vim window vertically and horizontally?",
+    "options": [
+      ":split (vertical) and :vsplit (horizontal)",
+      ":vsp (vertical) and :sp (horizontal)",
+      "Ctrl-w v (horizontal) and Ctrl-w s (vertical)",
+      ":win-v and :win-h"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "':vsplit' (or ':vsp' / 'Ctrl-w v') splits the current window vertically side-by-side. ':split' (or ':sp' / 'Ctrl-w s') splits the window horizontally top-and-bottom."
+  },
+  {
+    "question": "What motion moves the cursor to the matching closing bracket, parenthesis, or curly brace?",
+    "options": [
+      "#",
+      "*",
+      "%",
+      "^"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Pressing '%' when the cursor is on any bracket, parenthesis, brace, or comment tag jumps the cursor immediately to its matching counterpart."
+  },
+  {
+    "question": "What is the difference between motions 'w', 'b', 'e' and their uppercase counterparts 'W', 'B', 'E' in Vim?",
+    "options": [
+      "Uppercase motions select text visually",
+      "Uppercase motions move backwards instead of forwards",
+      "Uppercase motions move twice as fast",
+      "Lowercase motions treat punctuation and symbols as word delimiters; uppercase motions treat only whitespace as delimiters"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "A lowercase 'word' consists of letters, digits, and underscores (stopping at punctuation like dots or slashes). An uppercase 'WORD' consists of any sequence of non-blank characters separated only by whitespace."
+  },
+  {
+    "question": "What Vim configuration setting displays relative line numbers above and below the current line while showing the absolute number on the current line?",
+    "code": "set number\nset relativenumber",
+    "options": [
+      "Combining 'set number' with 'set relativenumber'",
+      "set hybridnumber",
+      "set linecount=dynamic",
+      "set smartnumber"
     ],
     "correct": 0,
     "difficulty": "Beginner",
-    "explanation": "':%s/foo/bar/g' targets all lines (%) and replaces every occurrence on each line globally (g)."
+    "explanation": "Enabling both 'set number' and 'set relativenumber' creates hybrid line numbering: the current line displays its true absolute line number, while surrounding lines show their relative distance for easy motions (e.g. '5j', '12k')."
+  },
+  {
+    "question": "What command switches to the system clipboard register ('+') when yanking or pasting text in Vim?",
+    "options": [
+      "Pressing 'Ctrl-Shift-C'",
+      "Prefixing the yank or put command with '\"+' (e.g. '\"+yy' or '\"+p')",
+      "Running ':set clipboard=none'",
+      "Holding the Command/Windows key while pressing y"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "The '+' register maps directly to the system desktop clipboard (X11 CLIPBOARD or OS clipboard). '\"+y' yanks text to the system clipboard, and '\"+p' pastes from it."
+  },
+  {
+    "question": "How do you navigate through compilation errors or search matches in Vim's Quickfix list?",
+    "options": [
+      ":error-next and :error-prev",
+      ":qnext and :qprev",
+      ":cnext to go to the next error, :cprev for previous, and :copen to view the list",
+      "Ctrl-n and Ctrl-p in Command mode"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "The Quickfix list aggregates error locations or grep search matches. Use ':copen' to open the window, ':cnext' to jump to the next item, and ':cprev' to jump to the previous item."
+  },
+  {
+    "question": "What is an 'autocmd' (Autocommand) in Vim configuration?",
+    "code": "autocmd BufWritePre *.py :%s/\\s\\+$//e",
+    "options": [
+      "A background thread that automatically saves files every minute",
+      "An automated shell script generator",
+      "A keyboard shortcut mapped to F1-F12 keys",
+      "A rule that automatically executes commands or functions in response to specific editor events (such as opening a file or writing a buffer)"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "Autocommands allow you to register commands that execute automatically when certain events occur (e.g., 'BufReadPost', 'BufWritePre', 'FileType')."
   }
 ]

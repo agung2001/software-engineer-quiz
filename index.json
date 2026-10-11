@@ -2,113 +2,113 @@
   "tools": {
     "bash": {
       "file": "questions/bash.json",
-      "count": 1
+      "count": 20
     },
     "css": {
       "file": "questions/css.json",
-      "count": 2
+      "count": 20
     },
     "css3": {
       "file": "questions/css3.json",
-      "count": 2
+      "count": 20
     },
     "docker": {
       "file": "questions/docker.json",
-      "count": 1
+      "count": 20
     },
     "git": {
       "file": "questions/git.json",
-      "count": 1
+      "count": 20
     },
     "go": {
       "file": "questions/go.json",
-      "count": 1
+      "count": 20
     },
     "html": {
       "file": "questions/html.json",
-      "count": 2
+      "count": 20
     },
     "html5": {
       "file": "questions/html5.json",
-      "count": 2
+      "count": 20
     },
     "javascript": {
       "file": "questions/javascript.json",
-      "count": 1
+      "count": 20
     },
     "laravel": {
       "file": "questions/laravel.json",
-      "count": 1
+      "count": 20
     },
     "mongodb": {
       "file": "questions/mongodb.json",
-      "count": 1
+      "count": 20
     },
     "mysql": {
       "file": "questions/mysql.json",
-      "count": 1
+      "count": 20
     },
     "nodejs": {
       "file": "questions/nodejs.json",
-      "count": 1
+      "count": 20
     },
     "php": {
       "file": "questions/php.json",
-      "count": 1
+      "count": 20
     },
     "postgresql": {
       "file": "questions/postgresql.json",
-      "count": 1
+      "count": 20
     },
     "python": {
       "file": "questions/python.json",
-      "count": 1
+      "count": 20
     },
     "react": {
       "file": "questions/react.json",
-      "count": 1
+      "count": 20
     },
     "redis": {
       "file": "questions/redis.json",
-      "count": 1
+      "count": 20
     },
     "sass": {
       "file": "questions/sass.json",
-      "count": 1
+      "count": 20
     },
     "sqlite": {
       "file": "questions/sqlite.json",
-      "count": 1
+      "count": 20
     },
     "svelte": {
       "file": "questions/svelte.json",
-      "count": 1
+      "count": 20
     },
     "tailwindcss": {
       "file": "questions/tailwindcss.json",
-      "count": 1
+      "count": 20
     },
     "typescript": {
       "file": "questions/typescript.json",
-      "count": 1
+      "count": 20
     },
     "vim": {
       "file": "questions/vim.json",
-      "count": 1
+      "count": 20
     },
     "vue": {
       "file": "questions/vue.json",
-      "count": 1
+      "count": 20
     },
     "vuejs": {
       "file": "questions/vuejs.json",
-      "count": 1
+      "count": 20
     },
     "webpack": {
       "file": "questions/webpack.json",
-      "count": 1
+      "count": 20
     }
   },
-  "totalQuestions": 31,
-  "updatedAt": "2026-10-11T16:14:12.294Z"
+  "totalQuestions": 540,
+  "updatedAt": "2026-10-11T16:56:40.497Z"
 }

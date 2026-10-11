@@ -1,15 +1,252 @@
 [
   {
-    "question": "Which SQLite journaling mode allows readers to access the database concurrently while a writer is writing?",
-    "code": "PRAGMA journal_mode=WAL;",
+    "question": "What is the primary operational advantage of enabling WAL (Write-Ahead Logging) mode in SQLite?",
+    "code": "PRAGMA journal_mode = WAL;",
     "options": [
-      "WAL (Write-Ahead Logging)",
-      "DELETE",
-      "MEMORY",
-      "OFF"
+      "Readers and writers do not block each other: multiple concurrent readers can operate while a writer is writing",
+      "Compresses the SQLite database file using zstd algorithm",
+      "Permits concurrent multi-threaded writes across separate network sockets",
+      "Disables all disk write synchronization for maximum speed"
     ],
     "correct": 0,
     "difficulty": "Intermediate",
-    "explanation": "WAL mode records changes to a separate -wal file, allowing concurrent readers without locking the database file against reads while writing."
+    "explanation": "In default rollback journal mode, writing locks the entire database file from readers. In WAL mode, changes are appended to a separate '-wal' log, allowing concurrent readers alongside one active writer."
+  },
+  {
+    "question": "How does SQLite's 'Type Affinity' (Manifest Typing) differ from most other relational database engines?",
+    "options": [
+      "SQLite strictly enforces declared data types and rejects mismatched inserts with an error",
+      "Any column can store any data type regardless of declared column type, as data types are associated with values rather than container columns",
+      "All columns are converted to UTF-8 strings internally",
+      "SQLite does not have data types and represents everything as raw BLOBs"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "SQLite uses manifest typing with five storage classes (NULL, INTEGER, REAL, TEXT, BLOB). A column's declared type merely suggests an 'affinity', but any value type can be stored in any column (unless STRICT tables are used)."
+  },
+  {
+    "question": "Why must an application explicitly execute 'PRAGMA foreign_keys = ON;' on every new SQLite connection?",
+    "options": [
+      "Foreign keys require a special enterprise license file",
+      "Foreign keys can only be validated once a database is loaded into RAM",
+      "Foreign key constraint enforcement is disabled by default for backward compatibility with older SQLite versions",
+      "Enabling foreign keys disables primary key uniqueness"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "To maintain backward compatibility with legacy applications created prior to SQLite 3.6.19, foreign key constraint enforcement is disabled by default on every new database connection."
+  },
+  {
+    "question": "When is creating a table with 'WITHOUT ROWID' beneficial in SQLite?",
+    "code": "CREATE TABLE user_sessions (\n  user_id INTEGER,\n  session_token TEXT,\n  PRIMARY KEY (user_id, session_token)\n) WITHOUT ROWID;",
+    "options": [
+      "To allow tables to exceed 2 TB in size",
+      "For append-only logging tables with no primary key",
+      "To enable full-text indexing automatically",
+      "For tables with non-integer or composite primary keys, saving disk space and eliminating an extra B-Tree lookup"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "Standard SQLite tables store data indexed by a 64-bit integer 'rowid'. 'WITHOUT ROWID' stores table rows directly inside the PRIMARY KEY B-Tree, eliminating duplicate storage and saving an index traversal."
+  },
+  {
+    "question": "What virtual table module in SQLite provides fast full-text search, phrase queries, and BM25 relevance ranking?",
+    "code": "CREATE VIRTUAL TABLE documents USING fts5(title, content);",
+    "options": [
+      "FTS5",
+      "全文検索 (FTS3)",
+      "Lucene-Lite",
+      "RTree"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "FTS5 is SQLite's built-in full-text search engine module, offering phrase queries, prefix queries, highlighting, and BM25 relevance ranking algorithms."
+  },
+  {
+    "question": "What does setting 'PRAGMA synchronous = NORMAL;' accomplish in WAL mode?",
+    "code": "PRAGMA journal_mode = WAL;\nPRAGMA synchronous = NORMAL;",
+    "options": [
+      "Disables all disk writes entirely",
+      "Provides ACID durability and crash safety against application crashes and power loss with far fewer fsync calls than FULL",
+      "Forces a disk sync on every single SQL statement",
+      "Restricts database transactions to read-only queries"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "In WAL mode, 'synchronous = NORMAL' only syncs the WAL file during checkpoint operations, which is completely crash-safe against OS crashes and much faster than FULL sync on every commit."
+  },
+  {
+    "question": "How do you create a purely transient In-Memory database in SQLite?",
+    "options": [
+      "Pass '/dev/null' as the filename",
+      "Set PRAGMA storage = RAM;",
+      "Open a connection using the special path ':memory:'",
+      "Create a table with ENGINE = MEMORY"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Opening a database with the filename ':memory:' (or a URI like 'file::memory:?cache=shared') creates a private, temporary database residing entirely in RAM that disappears when the connection closes."
+  },
+  {
+    "question": "What happens when an application encounters an 'SQLITE_BUSY' error code?",
+    "options": [
+      "The CPU is operating at 100% capacity",
+      "The disk volume has run out of free storage space",
+      "The database file has reached the maximum 281 TB limit",
+      "Another database connection holds an exclusive lock on the database file; the query timed out waiting for the lock"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'SQLITE_BUSY' indicates lock contention: another process or thread is writing or reading, and the busy handler timed out before acquiring the needed lock. Setting 'busy_timeout' helps mitigate this."
+  },
+  {
+    "question": "What does 'PRAGMA busy_timeout = 5000;' do?",
+    "options": [
+      "Configures SQLite to sleep and retry acquiring a lock for up to 5,000 milliseconds before returning SQLITE_BUSY",
+      "Terminates any query that runs longer than 5 seconds",
+      "Disconnects idle connections after 5 seconds of inactivity",
+      "Limits transaction commits to 5,000 per second"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'busy_timeout' sets a sleep-and-retry duration (in milliseconds). When another process holds a database lock, SQLite will repeatedly retry for the specified time before giving up and returning SQLITE_BUSY."
+  },
+  {
+    "question": "What is the difference between 'BEGIN DEFERRED' and 'BEGIN IMMEDIATE' transactions in SQLite?",
+    "code": "BEGIN IMMEDIATE;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;",
+    "options": [
+      "'IMMEDIATE' bypasses disk writing and commits directly to RAM",
+      "'DEFERRED' does not acquire locks until the first read/write statement; 'IMMEDIATE' acquires a RESERVED write lock immediately on start",
+      "'DEFERRED' rolls back automatically if uncommitted after 10 seconds",
+      "'IMMEDIATE' allows multiple concurrent writers simultaneously"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "'BEGIN DEFERRED' delays acquiring locks until data is accessed. If two connections attempt to write, both might succeed at DEFERRED but one will fail with SQLITE_BUSY on write. 'BEGIN IMMEDIATE' reserves the write lock right away."
+  },
+  {
+    "question": "What is the purpose of the 'VACUUM' command in SQLite?",
+    "options": [
+      "Removes expired WAL log checkpoints",
+      "Clears all cached query plans from memory",
+      "Rebuilds the entire database file from scratch into a contiguous file, reclaiming fragmented free space left by deleted rows",
+      "Deletes all tables and resets the database schema"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Deleting rows in SQLite leaves unused pages in a freelist without shrinking the file on disk. 'VACUUM' copies active contents into a temporary database and replaces the original, compacting file size."
+  },
+  {
+    "question": "In 'EXPLAIN QUERY PLAN' output, what indicates that SQLite is performing a full table scan rather than using an index?",
+    "code": "EXPLAIN QUERY PLAN SELECT * FROM users WHERE email = 'a@b.com';",
+    "options": [
+      "SEEK TABLE users",
+      "SEARCH TABLE users USING INDEX",
+      "COVERING INDEX users",
+      "SCAN TABLE users"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'SCAN TABLE' means SQLite must read every page and row of the table sequentially (full table scan). 'SEARCH TABLE ... USING INDEX' means an index was used to pinpoint matching rows."
+  },
+  {
+    "question": "What is the difference between 'STORED' and 'VIRTUAL' Generated Columns in SQLite?",
+    "code": "CREATE TABLE products (\n  price REAL,\n  tax REAL,\n  total REAL GENERATED ALWAYS AS (price + tax) STORED\n);",
+    "options": [
+      "'STORED' columns are computed on write and persisted on disk; 'VIRTUAL' columns are recomputed on the fly when read",
+      "'VIRTUAL' columns can be indexed, but 'STORED' columns cannot",
+      "'STORED' columns only support string concatenations",
+      "There is no difference in storage overhead"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "A 'VIRTUAL' column consumes no storage space on disk and is recalculated every time the row is read. A 'STORED' column is computed during INSERT/UPDATE and saved in the database file."
+  },
+  {
+    "question": "How does SQLite handle extracting values from JSON columns using modern arrow syntax (3.38+)?",
+    "code": "SELECT data->>'name', data->'tags' FROM events;",
+    "options": [
+      "'->' performs full-text search, while '->>' deletes the JSON field",
+      "'->>' extracts the value as a SQL text or number scalar; '->' extracts the value as a JSON-encoded string or object",
+      "'->>' can only extract integer values",
+      "Both operators are identical aliases for json_quote()"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Similar to PostgreSQL, '->' extracts a sub-element preserving JSON format (e.g. '\"Alice\"'), while '->>' extracts the underlying primitive unquoted scalar value (e.g. 'Alice')."
+  },
+  {
+    "question": "What is a 'STRICT' table in SQLite (introduced in version 3.37.0)?",
+    "code": "CREATE TABLE orders (\n  id INTEGER PRIMARY KEY,\n  total REAL\n) STRICT;",
+    "options": [
+      "Disables NULL values on all columns by default",
+      "Encrypts table contents using AES-256",
+      "Enforces rigid static type checking at insert/update time, rejecting values that do not match the specified column data type",
+      "Locks the table against schema migrations"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Adding 'STRICT' to a table definition opts out of SQLite's traditional flexible type affinity, strictly enforcing that data inserted into columns conforms to declared datatypes (INT, REAL, TEXT, BLOB, ANY)."
+  },
+  {
+    "question": "What is the theoretical maximum file size of an SQLite database?",
+    "options": [
+      "16 Terabytes",
+      "2 Gigabytes",
+      "4 Gigabytes",
+      "Approximately 281 Terabytes (using 65,536-byte pages and 2^32 pages)"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "With the maximum supported page size of 65,536 bytes and a 2^32-1 page count ceiling, an SQLite database file can theoretically grow up to approximately 281 TB."
+  },
+  {
+    "question": "How does SQLite handle Upsert operations?",
+    "code": "INSERT INTO counters (id, count) VALUES (1, 1)\nON CONFLICT(id) DO UPDATE SET count = count + 1;",
+    "options": [
+      "ON CONFLICT(target) DO UPDATE SET ... or DO NOTHING",
+      "INSERT OR UPDATE INTO counters",
+      "REPLACE INTO counters with MERGE",
+      "UPSERT INTO counters"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "SQLite supports standard 'ON CONFLICT(target) DO UPDATE ...' or 'ON CONFLICT(target) DO NOTHING' syntax (introduced in version 3.24.0)."
+  },
+  {
+    "question": "What occurs during a WAL 'checkpoint' operation in SQLite?",
+    "options": [
+      "The entire database is dumped to an SQL script",
+      "Committed transactions from the WAL file are synced and written back into the main database file",
+      "All active transactions are forcibly terminated",
+      "The database checks for corrupt B-Tree pointers"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "A WAL checkpoint transfers committed pages from the write-ahead log (-wal) back into the primary database (.db) file, resetting the log and preventing unbounded file growth."
+  },
+  {
+    "question": "What is the primary architectural model of SQLite compared to client-server databases like PostgreSQL or MySQL?",
+    "options": [
+      "It requires a background Windows service or systemd daemon to process connections",
+      "It is a distributed distributed-consensus key-value store running on cluster nodes",
+      "It is an in-process, serverless C library that interacts directly with ordinary disk files without running a standalone server daemon",
+      "It uses network sockets to communicate between local processes"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "SQLite is serverless. There is no daemon process or network protocol. The database engine is embedded directly into the host application program, sharing memory and executing directly via function calls."
+  },
+  {
+    "question": "What does 'PRAGMA integrity_check;' do in SQLite?",
+    "options": [
+      "Verifies that all columns have foreign key constraints",
+      "Validates user credentials against password policies",
+      "Checks whether the database is synchronized with an upstream replica",
+      "Scans the entire database file to verify that out-of-order records, missing pages, malformed records, and corrupt indices do not exist"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'PRAGMA integrity_check;' performs an exhaustive integrity check of the database, verifying B-tree structures, freelists, index consistency, and page checksums, returning 'ok' if no corruption is detected."
   }
 ]

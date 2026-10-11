@@ -11,5 +11,243 @@
     "correct": 0,
     "difficulty": "Intermediate",
     "explanation": "Go follows the CSP philosophy: 'Do not communicate by sharing memory; instead, share memory by communicating' via Channels."
+  },
+  {
+    "question": "What is the order of execution for multiple 'defer' statements within a single Go function?",
+    "code": "func test() {\n  defer fmt.Print(\"A\")\n  defer fmt.Print(\"B\")\n  defer fmt.Print(\"C\")\n}",
+    "options": [
+      "FIFO (First-In, First-Out) - prints 'ABC'",
+      "LIFO (Last-In, First-Out) - prints 'CBA'",
+      "Random concurrent execution",
+      "Alphabetical sorting by function name"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "Deferred calls are pushed onto a per-goroutine call stack and evaluated in reverse LIFO order when the surrounding function returns."
+  },
+  {
+    "question": "How does Go determine if a concrete struct satisfies an interface?",
+    "options": [
+      "Via reflection registered inside the init() function",
+      "Explicitly: the struct must declare 'implements InterfaceName'",
+      "Implicitly: if the struct implements all methods declared in the interface, it satisfies it without any explicit declaration",
+      "By inheriting from an abstract base class"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Go interfaces are satisfied implicitly (duck typing at compile time). Types do not explicitly declare which interfaces they implement."
+  },
+  {
+    "question": "What happens when you send a value to a closed channel in Go?",
+    "code": "ch := make(chan int)\nclose(ch)\nch <- 10",
+    "options": [
+      "The channel automatically reopens to accept the value",
+      "The value is silently discarded",
+      "The sending goroutine blocks forever (deadlock)",
+      "The runtime panics immediately"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "Sending to a closed channel causes a runtime panic. Conversely, receiving from a closed channel returns the zero value and a false boolean indicator."
+  },
+  {
+    "question": "What is the memory structure of a Slice header in Go's 64-bit runtime?",
+    "options": [
+      "A 24-byte struct containing a pointer to the backing array, a length (int), and a capacity (int)",
+      "A linked list node with pointers to the next and previous elements",
+      "A direct pointer to a contiguous heap block with length stored in negative offset metadata",
+      "An immutable dynamic array wrapper that clones on every mutation"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "A Go slice is a 3-word struct (24 bytes on 64-bit architectures): a pointer to the underlying array, an integer 'len', and an integer 'cap'."
+  },
+  {
+    "question": "What is the primary role of the 'context.Context' package in production Go applications?",
+    "code": "ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)\ndefer cancel()\nreq, _ := http.NewRequestWithContext(ctx, \"GET\", url, nil)",
+    "options": [
+      "Providing thread-safe global dependency injection containers",
+      "Carrying cancellation signals, deadlines, and request-scoped metadata across API boundaries and goroutines",
+      "Managing database connection pooling and query transactions",
+      "Compiling regular expressions into DFA state machines"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "The 'context' package propagates cancellation signals, timeouts, deadlines, and trace metadata across concurrent call chains and goroutines."
+  },
+  {
+    "question": "What is the key difference between 'make()' and 'new()' in Go?",
+    "options": [
+      "'make()' can instantiate any arbitrary struct, while 'new()' only works on primitive integers",
+      "'new()' is used for heap allocations, while 'make()' is exclusively for stack allocations",
+      "'make()' initializes slices, maps, and channels returning the type itself; 'new()' allocates zeroed memory and returns a pointer (*T)",
+      "There is no difference; 'make()' is simply syntactic sugar for 'new()'"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'new(T)' allocates zeroed storage for type T and returns *T. 'make(T, args)' creates and initializes slices, maps, and channels (types requiring internal runtime structures), returning T."
+  },
+  {
+    "question": "How does the 'select' statement in Go behave when multiple channel cases are ready simultaneously?",
+    "code": "select {\ncase msg1 := <-ch1:\n  fmt.Println(msg1)\ncase msg2 := <-ch2:\n  fmt.Println(msg2)\n}",
+    "options": [
+      "It throws a compiler error due to ambiguous scheduling",
+      "It always executes the first case written in source code order",
+      "It executes both cases concurrently across two new goroutines",
+      "It picks one ready case at random with uniform distribution"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "When multiple cases in a 'select' statement are ready to proceed, Go selects one pseudo-randomly to avoid starvation of later cases."
+  },
+  {
+    "question": "What Go compiler optimization determines whether a variable can be safely allocated on the stack rather than the heap?",
+    "options": [
+      "Escape Analysis",
+      "Dead Code Elimination",
+      "Loop Unrolling",
+      "Monomorphization"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "Escape analysis analyzes whether references to a variable escape the scope of the function. If they do not, it is allocated cheaply on the stack rather than requiring heap garbage collection."
+  },
+  {
+    "question": "How does 'sync.RWMutex' differ from 'sync.Mutex' in Go?",
+    "options": [
+      "'sync.RWMutex' automatically unlocks after a configured timeout period",
+      "'sync.RWMutex' allows multiple concurrent readers (RLock) while granting exclusive access to a single writer (Lock)",
+      "'sync.Mutex' is re-entrant, whereas 'sync.RWMutex' is not",
+      "'sync.RWMutex' persists lock state across network sockets"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "RWMutex allows any number of concurrent readers holding RLock/RUnlock, but locks out all readers when a writer acquires Lock/Unlock, optimizing read-heavy workloads."
+  },
+  {
+    "question": "How do you recover from a panic in Go to prevent the entire program from crashing?",
+    "code": "defer func() {\n  if r := recover(); r != nil {\n    fmt.Println(\"Recovered from panic:\", r)\n  }\n}()",
+    "options": [
+      "By setting GODEBUG=panic_catch=1 in the environment",
+      "By wrapping dangerous code inside a 'try ... catch' block",
+      "By invoking 'recover()' directly inside a deferred function",
+      "By checking if error != nil at the end of main()"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'recover()' is a built-in function that regains control of a panicking goroutine. It is only useful when called directly inside a deferred function."
+  },
+  {
+    "question": "What is the initial stack size of a newly spawned Goroutine in modern Go?",
+    "options": [
+      "8 MB virtual memory mapping",
+      "1 MB fixed size identical to OS threads",
+      "64 KB fixed heap segment",
+      "Approximately 2 KB, dynamically growing and shrinking as needed"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "Goroutines start with an extremely small contiguous stack (around 2 KB), allowing a Go program to run hundreds of thousands of concurrent goroutines without exhausting RAM."
+  },
+  {
+    "question": "What is the purpose of the 'iota' identifier in Go 'const' declarations?",
+    "code": "const (\n  Pending = iota\n  Approved\n  Rejected\n)",
+    "options": [
+      "Simplifies definition of untyped integer increments starting from 0",
+      "Generates cryptographic random numbers at compile time",
+      "Creates an immutable enum validated against a string schema",
+      "Flags constant variables as atomic thread-safe primitives"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "'iota' is a predeclared identifier that represents successive untyped integer constants starting at 0, resetting to 0 at each 'const' keyword."
+  },
+  {
+    "question": "Which tool built into the Go command toolchain detects concurrent data races at runtime?",
+    "code": "go test -race ./...",
+    "options": [
+      "go vet --concurrency",
+      "The Race Detector (-race)",
+      "pprof --deadlock",
+      "go leak"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "Passing the '-race' flag instruments the compiled binary with ThreadSanitizer code to detect un-synchronized concurrent memory accesses at runtime."
+  },
+  {
+    "question": "What is the difference between 'errors.Is()' and 'errors.As()' introduced in Go 1.13?",
+    "options": [
+      "'errors.As()' converts errors into HTTP status codes",
+      "'errors.Is()' only works with string equality, while 'errors.As()' compares pointers",
+      "'errors.Is()' checks if an error tree matches a specific target sentinel error; 'errors.As()' unwraps and extracts a specific error type into a target variable",
+      "There is no difference; both perform structural casting on interfaces"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'errors.Is()' inspects an error chain to see if any wrapped error matches a target. 'errors.As()' finds the first error in the chain that matches a target type and casts it."
+  },
+  {
+    "question": "When does a package's 'init()' function execute in Go?",
+    "options": [
+      "Concurrently in a background goroutine during application startup",
+      "Whenever the package is first invoked by an external HTTP request",
+      "Only when explicitly called via init() in code",
+      "Automatically after package variable initialization and before the main() function runs"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'init()' functions execute automatically after all variable declarations in the package are evaluated and imported packages are initialized, before main.main() starts."
+  },
+  {
+    "question": "How are generics (Type Parameters) syntactically declared on a function in Go 1.18+?",
+    "code": "func Map[T any, R any](items []T, fn func(T) R) []R",
+    "options": [
+      "func Map[T any, R any](items []T, fn func(T) R) []R",
+      "func<T, R> Map(items []T, fn func(T) R) []R",
+      "func Map(items []T, fn func(T) R) []R where T, R : any",
+      "func Map(type T, type R)(items []T, fn func(T) R) []R"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "In Go 1.18+, type parameters are defined inside square brackets '[...]' between the function name and the parameter list, with each type parameter having a constraint (like 'any' or 'comparable')."
+  },
+  {
+    "question": "How does Go achieve composition without traditional object-oriented class inheritance?",
+    "code": "type Animal struct { Name string }\ntype Dog struct {\n  Animal\n  Breed string\n}",
+    "options": [
+      "Prototype delegation similar to JavaScript",
+      "Struct embedding: the inner struct's fields and methods are promoted directly to the outer struct",
+      "Multiple inheritance with virtual base tables",
+      "Abstract class extensions through dynamic proxy wrappers"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "Go favors composition over inheritance. By embedding a struct anonymously, its fields and methods are automatically promoted to the enclosing struct."
+  },
+  {
+    "question": "What kind of garbage collector does the standard Go runtime employ?",
+    "options": [
+      "A deterministic reference counting collector with automatic cyclic weak references",
+      "A generational copying garbage collector with young and old generations",
+      "A concurrent tri-color mark-and-sweep collector with low sub-millisecond stop-the-world pauses",
+      "Manual memory compaction without runtime pausing"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "Go uses a non-generational, concurrent tri-color mark-and-sweep garbage collector designed for predictable, sub-millisecond stop-the-world (STW) pauses rather than maximizing batch throughput."
+  },
+  {
+    "question": "Why must you pass a pointer to a 'sync.WaitGroup' when passing it into a function or Goroutine?",
+    "code": "func worker(wg *sync.WaitGroup) {\n  defer wg.Done()\n}",
+    "options": [
+      "To prevent memory leaks when wg.Wait() finishes",
+      "Go compiler forbids passing structs by value to goroutines",
+      "sync.WaitGroup requires heap allocation for CPU cache line alignment",
+      "sync.WaitGroup contains internal state (counters) that must not be copied; copying creates a detached counter causing deadlocks"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "sync.WaitGroup (and all types in the 'sync' package) should never be copied because copying duplicates their internal state and mutexes, causing wg.Done() to mutate a copy while wg.Wait() hangs forever."
   }
 ]

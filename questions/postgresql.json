@@ -10,5 +10,244 @@
     "correct": 0,
     "difficulty": "Intermediate",
     "explanation": "GIN indexes map elements to lists of row IDs containing those elements, making them ideal for full-text search documents and JSONB arrays."
+  },
+  {
+    "question": "Why does PostgreSQL require the VACUUM process to run periodically?",
+    "options": [
+      "To recompile stored PL/pgSQL procedures into machine code",
+      "To reclaim space occupied by dead row versions (dead tuples) created by updates and deletes under MVCC, and freeze transaction IDs",
+      "To flush dirty memory pages directly into replication standbys",
+      "To rebuild corrupted B-Tree index structures from scratch"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Because PostgreSQL uses Multi-Version Concurrency Control (MVCC), UPDATE and DELETE leave behind old row versions (dead tuples). VACUUM cleans these up and prevents 32-bit transaction ID wraparound."
+  },
+  {
+    "question": "When is a BRIN (Block Range Index) significantly more appropriate than a standard B-Tree index in PostgreSQL?",
+    "options": [
+      "For full-text search across arbitrary multilingual articles",
+      "For small tables with frequently updated random primary keys",
+      "For massive, append-only datasets (like time-series logs) whose values are naturally correlated with physical table storage order",
+      "For unique constraint enforcement on foreign key columns"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "BRIN stores summary min/max metadata for ranges of physical disk pages. For very large tables where data is inserted sequentially (e.g., timestamps), BRIN uses a fraction of the RAM and disk space of B-Trees."
+  },
+  {
+    "question": "What is the key performance difference between PostgreSQL's 'JSON' and 'JSONB' data types?",
+    "options": [
+      "'JSONB' compresses data using Brotli, resulting in slower writes but smaller storage",
+      "'JSON' supports GIN indexing while 'JSONB' only supports B-Trees",
+      "'JSONB' preserves whitespace and key order, while 'JSON' does not",
+      "'JSONB' stores data in a decomposed binary format that supports indexing and faster lookups, whereas 'JSON' stores exact textual strings requiring re-parsing on read"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'JSON' stores the raw text representation (preserving formatting and duplicate keys, fast insertion, slow query). 'JSONB' decomposes text into binary types, eliminating whitespace and enabling GIN indexing and fast querying."
+  },
+  {
+    "question": "What is the difference between 'RANK()' and 'DENSE_RANK()' window functions in SQL?",
+    "code": "SELECT val, RANK() OVER (ORDER BY val), DENSE_RANK() OVER (ORDER BY val) FROM t;",
+    "options": [
+      "'RANK()' leaves gaps in rankings after ties (e.g. 1, 2, 2, 4); 'DENSE_RANK()' does not leave gaps (e.g. 1, 2, 2, 3)",
+      "'DENSE_RANK()' ignores tie values and arbitrarily increments",
+      "'RANK()' requires a PARTITION BY clause while 'DENSE_RANK()' forbids it",
+      "There is no difference; they are synonymous"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "When encountering tie values, 'RANK()' skips subsequent ranks based on the number of ties, whereas 'DENSE_RANK()' always assigns consecutive integer ranks without gaps."
+  },
+  {
+    "question": "Why is an external connection pooler like PgBouncer practically mandatory for high-concurrency PostgreSQL workloads?",
+    "options": [
+      "PostgreSQL limits max_connections to a hard ceiling of 100",
+      "PostgreSQL allocates a dedicated operating system process per client connection, consuming significant RAM and context-switching overhead",
+      "PostgreSQL does not support connection authentication natively",
+      "PostgreSQL kills connections after 60 seconds of inactivity"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "PostgreSQL uses a process-based concurrency architecture (each connection is a separate backend process with several megabytes of RAM). PgBouncer pools connections so thousands of clients can share dozens of backend processes efficiently."
+  },
+  {
+    "question": "What feature enables executing recursive hierarchical queries (e.g. organizational trees or graph traversals) in PostgreSQL?",
+    "code": "WITH RECURSIVE subordinates AS (\n  SELECT id, manager_id FROM employees WHERE manager_id IS NULL\n  UNION ALL\n  SELECT e.id, e.manager_id FROM employees e\n  INNER JOIN subordinates s ON s.id = e.manager_id\n)\nSELECT * FROM subordinates;",
+    "options": [
+      "The CONNECT BY clause from ANSI SQL",
+      "Stored cursors with FOR IN LOOP syntax",
+      "Common Table Expressions (CTE) using 'WITH RECURSIVE'",
+      "Dynamic PL/pgSQL recursion"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'WITH RECURSIVE' defines a Common Table Expression that repeatedly evaluates an anchor query and a recursive union query until no new rows are returned, ideal for trees and graphs."
+  },
+  {
+    "question": "How does PostgreSQL handle an UPSERT (insert or update on conflict)?",
+    "code": "INSERT INTO users (id, name)\nVALUES (1, 'Alice')\nON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;",
+    "options": [
+      "UPSERT INTO users VALUES",
+      "INSERT OR REPLACE INTO users",
+      "MERGE INTO ... MATCHED (legacy syntax only)",
+      "ON CONFLICT (target) DO UPDATE / DO NOTHING"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "PostgreSQL provides 'ON CONFLICT (constraint_or_column) DO UPDATE / DO NOTHING', referencing proposed insert values via the pseudo-table 'EXCLUDED'."
+  },
+  {
+    "question": "What is a 'Partial Index' in PostgreSQL, and when is it useful?",
+    "code": "CREATE INDEX idx_unprocessed_orders ON orders (created_at)\nWHERE status = 'unprocessed';",
+    "options": [
+      "An index built over a subset of rows defined by a WHERE clause, drastically reducing index size and write overhead",
+      "An index that covers only the first 255 characters of text columns",
+      "An index that is shared across multiple tables",
+      "An index that is temporarily deactivated during bulk inserts"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Partial indexes include only rows that satisfy a specified predicate. If 99% of orders are 'processed', indexing only 'unprocessed' orders makes the index tiny, cache-friendly, and cheap to maintain."
+  },
+  {
+    "question": "How can you refresh a Materialized View without locking it against concurrent read queries in PostgreSQL?",
+    "code": "REFRESH MATERIALIZED VIEW CONCURRENTLY order_summary;",
+    "options": [
+      "REFRESH MATERIALIZED VIEW IN BACKGROUND",
+      "REFRESH MATERIALIZED VIEW CONCURRENTLY (requires a UNIQUE index on the view)",
+      "REINDEX MATERIALIZED VIEW",
+      "ALTER MATERIALIZED VIEW SET READ COMMITTED"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'REFRESH MATERIALIZED VIEW CONCURRENTLY' updates the view without exclusive read-locking, allowing concurrent SELECTs while it updates. A unique index on at least one column is required."
+  },
+  {
+    "question": "What PostgreSQL extension provides Application-Level distributed locking without touching table rows?",
+    "code": "SELECT pg_advisory_lock(12345);\n-- Critical section\nSELECT pg_advisory_unlock(12345);",
+    "options": [
+      "pg_semaphore",
+      "pg_mutex",
+      "PostgreSQL Advisory Locks (pg_advisory_lock)",
+      "pg_sync_guard"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "Advisory locks are explicit application-controlled locks created in PostgreSQL memory identified by an integer key. They do not lock table rows and unlock automatically when the session closes."
+  },
+  {
+    "question": "What PostgreSQL extension is essential for tracking query execution times, call counts, and performance bottlenecks across production databases?",
+    "options": [
+      "pg_monitor",
+      "pg_buffercache",
+      "pg_profile",
+      "pg_stat_statements"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'pg_stat_statements' records execution statistics for all SQL statements executed by a server, including total time, mean time, buffer hits, and call counts."
+  },
+  {
+    "question": "What is the native PostgreSQL mechanism for asynchronous message passing and publish/subscribe notifications?",
+    "code": "LISTEN channel_name;\nNOTIFY channel_name, 'payload_string';",
+    "options": [
+      "LISTEN and NOTIFY",
+      "EMIT and SUBSCRIBE",
+      "SEND and RECEIVE",
+      "PUBLISH and TOPIC"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'LISTEN' and 'NOTIFY' provide inter-process communication over active database connections, allowing applications to broadcast and receive real-time notifications with payloads."
+  },
+  {
+    "question": "Why is 'GENERATED ALWAYS AS IDENTITY' preferred over legacy 'SERIAL' for auto-incrementing primary keys in modern PostgreSQL?",
+    "options": [
+      "'SERIAL' only supports 16-bit integers",
+      "It adheres to the SQL standard, prevents accidental manual value overrides, and manages sequence ownership cleanly",
+      "'IDENTITY' columns do not consume storage space in the WAL",
+      "'SERIAL' is removed in PostgreSQL 15+"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'IDENTITY' conforms to the SQL:2003 standard. Unlike 'SERIAL' (which merely creates an underlying sequence with a DEFAULT expression), IDENTITY enforces sequence ownership and prevents accidental manual inserts unless OVERRIDING SYSTEM VALUE is specified."
+  },
+  {
+    "question": "In 'EXPLAIN (ANALYZE, BUFFERS)' output, what does 'Bitmap Heap Scan' combined with 'Bitmap Index Scan' indicate?",
+    "options": [
+      "PostgreSQL resorted to an unindexed sequential table scan",
+      "The query executed on an image or bitmap column",
+      "The engine scanned index pages to build an in-memory bitmap of matching tuple locations, then fetched table pages sequentially in physical disk order",
+      "The query result was rendered directly to a GPU frame buffer"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "A Bitmap Index Scan collects row pointers matching the condition into a TID bitmap. The subsequent Bitmap Heap Scan visits physical data blocks in sequential page order, reducing random I/O."
+  },
+  {
+    "question": "What feature enables querying tables residing in external databases (like remote MySQL, MongoDB, or other PostgreSQL instances) directly via SQL?",
+    "code": "CREATE SERVER foreign_server FOREIGN DATA WRAPPER postgres_fdw ...;",
+    "options": [
+      "External Table Connectors",
+      "Database Links (DBLINK only)",
+      "Federated Storage Engine",
+      "Foreign Data Wrappers (FDW)"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "Foreign Data Wrappers (FDW, standardized via SQL/MED) allow PostgreSQL to query and mutate tables in external data stores seamlessly as if they were local tables."
+  },
+  {
+    "question": "What does setting 'search_path' in PostgreSQL determine?",
+    "code": "SET search_path TO tenant_a, public;",
+    "options": [
+      "The order of schemas inspected when resolving unqualified table and function names",
+      "The filesystem directory where data files are located",
+      "The list of IP addresses allowed to connect to the database",
+      "The directories searched for foreign C language extensions"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "'search_path' defines a list of schemas that PostgreSQL searches in order when a query specifies an unqualified table or object name (like 'SELECT * FROM users;'), commonly used for multi-tenancy."
+  },
+  {
+    "question": "What is the purpose of Write-Ahead Logging (WAL) in PostgreSQL?",
+    "options": [
+      "Logs user login attempts and security audits",
+      "Ensures durability and crash recovery by writing changes to sequential log files on disk before modifying data pages in memory",
+      "Compresses historical tables into cold storage archives",
+      "Buffers incoming TCP packets during network spikes"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "WAL guarantees ACID durability. By ensuring all data changes are appended to the WAL before data page buffers are flushed to disk, the database can completely recover to a consistent state following an unexpected crash."
+  },
+  {
+    "question": "What type of index allows searching for strings in case-insensitive fashion using 'lower(email)' without modifying the underlying column data?",
+    "code": "CREATE INDEX idx_users_lower_email ON users (lower(email));",
+    "options": [
+      "Virtual View Index",
+      "Collation Override Index",
+      "Expression Index (Functional Index)",
+      "Regex Token Index"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "An expression index computes the result of a function or expression (such as 'lower(email)') and stores it in the index, speeding up queries matching 'WHERE lower(email) = ?'."
+  },
+  {
+    "question": "What modern PostgreSQL extension powers vector embeddings search and retrieval-augmented generation (RAG) for AI applications?",
+    "code": "SELECT * FROM items ORDER BY embedding <-> '[0.1, 0.2, 0.3]' LIMIT 5;",
+    "options": [
+      "pg_tensor",
+      "pg_ai",
+      "pg_embed",
+      "pgvector"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'pgvector' is an open-source extension for PostgreSQL that enables storing vector embeddings and querying nearest neighbors using distance operators (L2 distance, inner product, cosine distance) and HNSW/IVFFlat indexes."
   }
 ]

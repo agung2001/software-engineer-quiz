@@ -11,5 +11,238 @@
     "correct": 0,
     "difficulty": "Beginner",
     "explanation": "git cherry-pick allows you to select one or more specific commits by hash and apply their changes directly to HEAD without merging the branch."
+  },
+  {
+    "question": "What is the key difference between 'git reset --soft', '--mixed', and '--hard' targeting HEAD~1?",
+    "options": [
+      "--soft permanently deletes files from disk; --hard keeps them in the staging area",
+      "--soft moves HEAD leaving index and working tree untouched; --mixed resets index too; --hard resets HEAD, index, and working tree",
+      "--mixed is the only mode that creates a new merge commit",
+      "--hard preserves uncommitted changes while --soft deletes them"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'--soft' moves HEAD (changes remain staged). '--mixed' (default) moves HEAD and unstages changes (files remain in working tree). '--hard' discards all changes in HEAD, index, and working tree."
+  },
+  {
+    "question": "If you accidentally ran 'git reset --hard HEAD~5' and lost recent commits, what Git tool can recover them?",
+    "options": [
+      "git checkout --rollback",
+      "git fsck --lost-found",
+      "git reflog",
+      "git log --deleted"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'git reflog' records every position HEAD has pointed to locally, allowing you to locate and checkout or cherry-pick the lost commit hash before garbage collection."
+  },
+  {
+    "question": "What Git command uses binary search across your commit history to find which commit introduced a specific regression or bug?",
+    "code": "git bisect start\ngit bisect bad HEAD\ngit bisect good v1.0.0",
+    "options": [
+      "git find-bug",
+      "git blame --search",
+      "git trace",
+      "git bisect"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'git bisect' tests the midpoint of commit ranges (manually or via a test script with 'git bisect run') to identify the exact commit that introduced a defect in O(log N) steps."
+  },
+  {
+    "question": "Why is 'git revert <commit>' preferred over 'git reset' when undoing a commit on a shared public branch (like 'main')?",
+    "options": [
+      "'git revert' creates a new commit that inverts the changes, avoiding destructive history rewrites that break teammates' local branches",
+      "'git revert' deletes the commit hash from the central Git server permanently",
+      "'git reset' is prohibited by GitHub and GitLab repository permissions",
+      "'git revert' merges branch conflicts automatically without human intervention"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "'git revert' appends a new commit that undoes the targeted commit's diff, preserving commit history linearly and avoiding the need for dangerous force-pushes."
+  },
+  {
+    "question": "What does being in a 'detached HEAD' state mean in Git?",
+    "options": [
+      "The local repository has lost network connection with the origin remote",
+      "HEAD points directly to a specific commit hash rather than a named local branch reference",
+      "The working tree has unresolved merge conflicts requiring manual abort",
+      "The Git garbage collector has marked unreferenced commits for deletion"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "In a detached HEAD state, HEAD points to an explicit commit object. Commits made here are not tracked by any branch and may be lost unless saved to a new branch with 'git switch -c <name>'."
+  },
+  {
+    "question": "What is the difference between 'git stash pop' and 'git stash apply'?",
+    "options": [
+      "'pop' only works on untracked files, whereas 'apply' works on tracked files",
+      "'apply' automatically commits the stashed changes to HEAD",
+      "'pop' restores the stashed changes and deletes them from the stash list, while 'apply' retains the stash entry in the list",
+      "There is no difference; 'pop' is simply an alias for 'apply'"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'git stash pop' applies the stash at the top of the stack and drops it if successful, while 'git stash apply' leaves the stash entry in your stash list for potential reuse."
+  },
+  {
+    "question": "Which Git feature allows you to checkout multiple branches of the same repository simultaneously into different folders on disk?",
+    "code": "git worktree add ../feature-branch feature-branch",
+    "options": [
+      "git subtree",
+      "git submodule",
+      "git clone --mirror",
+      "git worktree"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "'git worktree' allows checking out and working on multiple branches in separate working directories linked to a single shared .git repository database, without re-cloning."
+  },
+  {
+    "question": "In Git 2.23+, which modern commands were introduced to replace the overloaded 'git checkout' command for switching branches and restoring files?",
+    "options": [
+      "'git switch' for branches and 'git restore' for working tree files",
+      "'git change' for branches and 'git undo' for files",
+      "'git branch --select' and 'git unstage'",
+      "'git goto' and 'git revert --working'"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "Git 2.23 split 'git checkout' into 'git switch' (for navigating branches) and 'git restore' (for discarding or unstaging working tree / index file changes)."
+  },
+  {
+    "question": "What interactive rebase command in 'git rebase -i' combines a commit into the previous one while discarding its commit message?",
+    "options": [
+      "squash (s)",
+      "fixup (f)",
+      "reword (r)",
+      "drop (d)"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'fixup' (or 'f') merges the changes into the previous commit and discards the commit log message, whereas 'squash' keeps both messages and opens an editor to combine them."
+  },
+  {
+    "question": "What command shows diffs for changes that have been staged into the index with 'git add' but not yet committed?",
+    "options": [
+      "git diff --working",
+      "git diff HEAD",
+      "git diff --staged (or --cached)",
+      "git status --diff"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'git diff' shows unstaged changes, while 'git diff --staged' (or 'git diff --cached') inspects changes staged in the index ready for commit."
+  },
+  {
+    "question": "What does a fast-forward merge ('git merge --ff') do when merging a feature branch into main?",
+    "options": [
+      "Creates an empty merge commit with two parent commit hashes",
+      "Squashes all feature commits into a single commit on main",
+      "Rebases the feature branch onto the upstream remote server",
+      "Moves the main branch pointer directly forward to the tip of the feature branch without creating a merge commit"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "If no divergent commits occurred on main, Git simply fast-forwards the branch pointer to the target commit without creating an extra merge commit."
+  },
+  {
+    "question": "Which Git command searches commit history for changes that added or removed a specific string from the codebase?",
+    "code": "git log -S \"apiKeySecret\"",
+    "options": [
+      "git log -S (pickaxe search)",
+      "git grep --history",
+      "git search-commits",
+      "git blame --string"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "The 'git log -S <string>' pickaxe option searches commits where the occurrence count of a specified string was altered (added or deleted) in the diff."
+  },
+  {
+    "question": "What is the purpose of the '.gitattributes' file when configured with '* text=auto'?",
+    "options": [
+      "Enforces UTF-8 character encoding on all tracked text files",
+      "Normalizes line endings (LF vs CRLF) across Windows, macOS, and Linux collaborators",
+      "Automatically formats source files with Prettier before commit",
+      "Converts markdown files into HTML documentation on push"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'.gitattributes' with '* text=auto' tells Git to handle line ending conversions automatically, committing LF to the repository and checking out native CRLF/LF per OS."
+  },
+  {
+    "question": "How does 'git clean -fd' affect your local working tree?",
+    "options": [
+      "Deletes all merged local branches permanently",
+      "Reverts all staged files back to their uncommitted state",
+      "Forcefully removes all untracked files and directories that are not in the .gitignore file",
+      "Compacts the .git object database to save disk space"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'git clean -f' forces deletion of untracked files, and '-d' includes untracked directories, bringing your working tree to a pristine state."
+  },
+  {
+    "question": "What is the fundamental difference between 'git fetch' and 'git pull'?",
+    "options": [
+      "'git pull' cannot handle divergent branches",
+      "'git pull' downloads metadata only, whereas 'git fetch' downloads actual file contents",
+      "'git fetch' requires write permissions on the remote repository",
+      "'git fetch' downloads remote objects and updates remote-tracking branches without modifying local working files; 'git pull' fetches and then merges/rebases"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'git fetch' safely updates your remote refs (origin/main) without touching your active branches. 'git pull' is shorthand for 'git fetch' followed by 'git merge' (or 'git rebase')."
+  },
+  {
+    "question": "Which client-side Git hook can be configured to validate that commit messages follow Conventional Commits format before a commit is created?",
+    "options": [
+      "commit-msg",
+      "pre-push",
+      "post-commit",
+      "pre-rebase"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "The 'commit-msg' hook receives the path to the temporary commit message file and can validate its format, exiting with non-zero to abort the commit if it fails validation."
+  },
+  {
+    "question": "What command allows you to amend the most recent commit without modifying its existing commit message?",
+    "code": "git add forgotten_file.js\ngit commit --amend --no-edit",
+    "options": [
+      "git commit --append",
+      "git commit --amend --no-edit",
+      "git commit --reuse-message",
+      "git update-ref HEAD"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'git commit --amend --no-edit' integrates staged changes into the preceding commit while retaining the existing author and commit log message."
+  },
+  {
+    "question": "What is the primary architectural difference between Git submodules and Git subtree?",
+    "options": [
+      "Submodules can only be cloned on Linux operating systems",
+      "Subtrees require separate authentication tokens for each nested directory",
+      "Submodules store a commit pointer to an external repo, while subtree incorporates the external repo's history and files directly into the root repository",
+      "Subtrees do not support pushing changes back upstream to the external repository"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "Submodules store only a 160-bit SHA-1 pointer to an external repository commit. Subtrees merge the external repository directly into the superproject's branch, avoiding submodule init steps for collaborators."
+  },
+  {
+    "question": "Which command flags with 'git stash' ensure that newly created untracked files are also included in the stash?",
+    "code": "git stash -u",
+    "options": [
+      "--stage-all",
+      "-a (or --all-commits)",
+      "--force-untracked",
+      "-u (or --include-untracked)"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "By default, 'git stash' only stashes modifications to tracked files. The '-u' (or '--include-untracked') flag tells Git to stash untracked files as well."
   }
 ]

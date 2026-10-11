@@ -1,14 +1,250 @@
 [
   {
-    "question": "What Webpack capability removes unused export code from the final production bundle by relying on ES module static analysis?",
+    "question": "What is the primary difference between Webpack Loaders and Webpack Plugins?",
     "options": [
-      "Tree Shaking",
-      "Scope Hoisting",
-      "Code Splitting",
-      "Hot Module Replacement"
+      "Loaders transform individual non-JavaScript files into valid modules; Plugins hook into the entire compilation lifecycle to perform broad bundle transformations",
+      "Plugins run during development only; Loaders run in production builds",
+      "Loaders manage code splitting; Plugins minify images",
+      "Loaders compile HTML templates; Plugins manage CSS modules"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "Loaders transform the source code of specific module types (e.g. transpiling TS or Sass) file-by-file. Plugins tap into compiler hooks to execute broader tasks like bundle optimization, HTML generation, or asset extraction."
+  },
+  {
+    "question": "In what order are Webpack loaders evaluated when specified in a 'use' array?",
+    "code": "module: {\n  rules: [\n    {\n      test: /\\.s[ac]ss$/i,\n      use: ['style-loader', 'css-loader', 'sass-loader'],\n    },\n  ],\n}",
+    "options": [
+      "From left to right (top to bottom): 'style-loader' runs first",
+      "From right to left (bottom to top): 'sass-loader' runs first, then 'css-loader', and finally 'style-loader'",
+      "Concurrently in parallel workers",
+      "Alphabetically by loader name"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "Webpack evaluates loaders in reverse array order (right to left / bottom to top). In this pipeline, 'sass-loader' compiles SCSS to CSS, 'css-loader' resolves imports/url(), and 'style-loader' injects CSS into the DOM."
+  },
+  {
+    "question": "How does Tree Shaking work in Webpack, and what is required to make it effective?",
+    "options": [
+      "Only works if code is written in CommonJS (require/module.exports)",
+      "Uses runtime profiling to detect unused functions while the app runs in the browser",
+      "Relies on static ES6 module syntax (import/export) to identify and remove unused exports during production minification, aided by '\"sideEffects\": false'",
+      "Compresses JavaScript files into zip archives on disk"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Tree shaking is dead-code elimination relying on ES module static structure. Webpack analyzes exports and flags unreferenced exports; Terser removes them in production mode. Marking 'sideEffects: false' in package.json ensures unused files can be dropped completely."
+  },
+  {
+    "question": "What is the difference between '[hash]', '[chunkhash]', and '[contenthash]' substitution tokens in Webpack output filenames?",
+    "options": [
+      "They are identical aliases for MD5 hashes",
+      "'[contenthash]' is based on the file name string",
+      "'[hash]' is only used in development mode",
+      "'[contenthash]' changes only when that specific file's content changes; '[chunkhash]' depends on the whole chunk; '[hash]' changes whenever anything in the compilation changes"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "For effective long-term browser HTTP caching, '[contenthash]' is optimal because editing a single CSS file will only change that CSS file's hash, leaving unchanged JS bundle hashes intact."
+  },
+  {
+    "question": "What feature introduced in Webpack 5 replaces legacy 'file-loader', 'url-loader', and 'raw-loader'?",
+    "code": "module: {\n  rules: [\n    {\n      test: /\\.(png|jpg|gif)$/i,\n      type: 'asset/resource',\n    },\n  ],\n}",
+    "options": [
+      "Asset Modules ('asset/resource', 'asset/inline', 'asset/source', 'asset')",
+      "StaticFilePlugin",
+      "NativeBlobLoader",
+      "MediaExtractor"
     ],
     "correct": 0,
     "difficulty": "Intermediate",
-    "explanation": "Tree shaking analyzes static import/export statements to omit unreferenced exports from production bundles, minimizing download weight."
+    "explanation": "Webpack 5 natively supports Asset Modules without installing additional loaders: 'asset/resource' emits separate files, 'asset/inline' inlines as base64 data URIs, 'asset/source' exports raw source, and 'asset' automatically chooses based on file size."
+  },
+  {
+    "question": "What is Module Federation in Webpack 5?",
+    "options": [
+      "A distributed Git repository manager built into Webpack",
+      "An architectural feature allowing multiple independent Webpack builds to dynamically share code and dependencies at runtime without rebuilding",
+      "A plugin that distributes builds across multiple remote CI nodes",
+      "A security tool that audits npm packages for vulnerabilities"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "Module Federation allows multiple micro-frontends or separate Webpack applications to dynamically load code and share common libraries (like React) from remote builds at runtime, drastically simplifying micro-frontend architectures."
+  },
+  {
+    "question": "Why should 'MiniCssExtractPlugin' be used in production instead of 'style-loader'?",
+    "options": [
+      "'style-loader' is forbidden in production builds",
+      "It minifies JavaScript code 50% faster",
+      "It extracts CSS into separate standalone .css files, allowing parallel browser loading and independent caching without Flash of Unstyled Content (FOUC)",
+      "It compiles Sass without requiring sass-loader"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'style-loader' injects CSS dynamically into HTML `<style>` tags via JavaScript at runtime, causing potential FOUC. 'MiniCssExtractPlugin' extracts CSS into static files linked via `<link rel=\"stylesheet\">`, ideal for caching."
+  },
+  {
+    "question": "What is the primary role of the 'DefinePlugin' in Webpack?",
+    "code": "new webpack.DefinePlugin({\n  'process.env.NODE_ENV': JSON.stringify('production'),\n  API_URL: JSON.stringify('https://api.example.com'),\n});",
+    "options": [
+      "Defines CSS custom properties globally",
+      "Creates runtime global variables on window at application boot",
+      "Validates TypeScript types during compilation",
+      "Replaces tokens in source code directly with compile-time literal values, allowing dead-code branches to be stripped"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "The 'DefinePlugin' performs direct text replacement at compile time. This allows code like 'if (process.env.NODE_ENV !== \"production\")' to become 'if (\"production\" !== \"production\")', which minifiers evaluate to false and strip completely."
+  },
+  {
+    "question": "How does Hot Module Replacement (HMR) improve the developer experience during local development?",
+    "options": [
+      "Exchanges, adds, or removes modules in a running application in the browser without requiring a full page refresh, preserving application state",
+      "Automatically restarts the Node.js server upon error",
+      "Compiles TypeScript files directly to native C++",
+      "Clears the browser local storage on code changes"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "HMR updates modules in the browser on the fly while retaining the current DOM and application state (e.g. form inputs or modal dialogs), avoiding full page reloads."
+  },
+  {
+    "question": "What is the purpose of 'SplitChunksPlugin' (configured under 'optimization.splitChunks')?",
+    "code": "optimization: {\n  splitChunks: {\n    chunks: 'all',\n  },\n}",
+    "options": [
+      "Splits image files into progressive WebP layers",
+      "Extracts shared dependencies (like vendor libraries in node_modules) and duplicate code into separate chunks to prevent duplicate downloads and maximize cache reuse",
+      "Divides large JavaScript files into 10 KB blocks",
+      "Distributes compilation tasks across multiple CPU cores"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'SplitChunksPlugin' automatically identifies shared modules across entry points and splits vendor packages into separate bundles, preventing duplicate downloads and optimizing browser cache hits."
+  },
+  {
+    "question": "What does the 'HtmlWebpackPlugin' do in a Webpack project?",
+    "options": [
+      "Validates HTML files against W3C accessibility standards",
+      "Converts HTML files into JSX components",
+      "Generates an HTML file and automatically injects all compiled Webpack script and stylesheet bundles into it using `<script>` and `<link>` tags",
+      "Renders HTML templates into PDF documents"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'HtmlWebpackPlugin' simplifies creation of HTML files to serve your bundles. It creates or uses an HTML template and automatically inserts `<script>` tags with generated hashes and names."
+  },
+  {
+    "question": "What is the architectural difference between Webpack's 'Compiler' and 'Compilation' objects?",
+    "options": [
+      "They are identical instances passed to plugin hooks",
+      "The Compiler runs in the browser; Compilation runs in Node.js",
+      "The Compiler creates ASTs; Compilation writes files to disk",
+      "The Compiler represents the fully configured Webpack lifecycle (persists across watch rebuilds); Compilation represents a single build run and dependency graph traversal"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "The 'Compiler' object is created once when Webpack starts and stores settings and plugins. In watch mode, a new 'Compilation' object is created for each individual build cycle to traverse modules, build the graph, and create chunks."
+  },
+  {
+    "question": "What library provides the underlying hook and event subscription architecture for Webpack plugins?",
+    "options": [
+      "Tapable",
+      "EventEmitter3",
+      "RxJS",
+      "Babel-Plugin-Core"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "Tapable is the backbone of Webpack's plugin architecture. It provides specialized hook classes (SyncHook, AsyncSeriesHook, AsyncParallelHook, etc.) that plugins 'tap' into to alter the build process."
+  },
+  {
+    "question": "How does setting 'cache: { type: \"filesystem\" }' in Webpack 5 accelerate rebuild times?",
+    "code": "module.exports = {\n  cache: {\n    type: 'filesystem',\n  },\n};",
+    "options": [
+      "Caches HTTP responses from remote CDN servers",
+      "Persists module graph and build artifacts to disk cache in node_modules/.cache, dramatically speeding up subsequent cold builds",
+      "Disables writing output files to disk",
+      "Stores output bundles in RAM swap memory"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Webpack 5 introduced native persistent filesystem caching. Rebuilds and cold project restarts can be up to 90% faster because compiled modules and snapshots are read from disk instead of recompiled."
+  },
+  {
+    "question": "What does the 'resolve.alias' configuration option do in 'webpack.config.js'?",
+    "code": "resolve: {\n  alias: {\n    '@components': path.resolve(__dirname, 'src/components/'),\n  },\n}",
+    "options": [
+      "Creates symlinks in node_modules",
+      "Renames output bundle filenames",
+      "Creates import aliases that map path shorthands to specific filesystem directories, eliminating fragile relative imports ('../../')",
+      "Aliases npm package names in package.json"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'resolve.alias' creates shorthand path mappings for module imports (e.g. replacing 'import Button from \"../../components/Button\"' with 'import Button from \"@components/Button\"')."
+  },
+  {
+    "question": "What does 'devtool: \"eval-cheap-module-source-map\"' offer compared to 'devtool: \"source-map\"'?",
+    "options": [
+      "Generates source maps for WebAssembly binaries only",
+      "Produces encrypted source maps for production debugging",
+      "Directly inlines CSS styles into HTML tags",
+      "Significantly faster build and rebuild speeds during development, at the expense of column-level precision and production bundle suitability"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'eval-cheap-module-source-map' trades column mappings and original source minification accuracy for blazing-fast rebuild speed in development. Full 'source-map' is slower and reserved for production."
+  },
+  {
+    "question": "What plugin is used by default in Webpack production mode to minify JavaScript code?",
+    "options": [
+      "TerserPlugin",
+      "UglifyJsPlugin (legacy)",
+      "BabelMinifyWebpackPlugin",
+      "EsbuildPlugin"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "Since Webpack 4/5, 'TerserWebpackPlugin' is the built-in default JavaScript minifier used in production mode to minify syntax, mangle variable names, and eliminate dead code."
+  },
+  {
+    "question": "What is Scope Hoisting (Module Concatenation) in Webpack production builds?",
+    "options": [
+      "Moves all variable declarations to the global window scope",
+      "Inlines modules into a single closure when possible, reducing function wrapper overhead and shrinking bundle size",
+      "Elevates CSS selectors to the document root",
+      "Runs all JavaScript code in strict mode"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "Scope Hoisting (enabled via ModuleConcatenationPlugin) analyzes ES module dependency trees and concatenates multiple modules into a single wrapper closure, decreasing bundle size and improving runtime execution speed."
+  },
+  {
+    "question": "How do dynamic imports with 'import()' enable code splitting in Webpack?",
+    "code": "button.addEventListener('click', () => {\n  import('./heavyModal.js').then((module) => {\n    module.show();\n  });\n});",
+    "options": [
+      "Bundles the file inside an isolated web worker",
+      "Converts the imported file into a synchronous script tag in HTML head",
+      "Webpack detects dynamic import() syntax and automatically emits the target module as a separate chunk loaded asynchronously on-demand",
+      "Compiles the module directly into a WebAssembly blob"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "When Webpack encounters dynamic 'import()', it automatically splits the requested module into an independent chunk that is loaded over the network only when the code path executes."
+  },
+  {
+    "question": "What does 'webpack-dev-server' proxy configuration solve during local development?",
+    "code": "devServer: {\n  proxy: {\n    '/api': 'http://localhost:8000',\n  },\n}",
+    "options": [
+      "Validates SSL certificates on localhost",
+      "Caches static assets on an external CDN proxy",
+      "Compresses outgoing HTTP requests using gzip",
+      "Forwards API requests to a separate backend server during development, avoiding Cross-Origin Resource Sharing (CORS) issues"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Setting up a proxy in 'webpack-dev-server' forwards requests matching '/api' to a backend server running on another port, bypassing browser CORS restrictions during development."
   }
 ]

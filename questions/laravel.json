@@ -11,5 +11,247 @@
     "correct": 0,
     "difficulty": "Intermediate",
     "explanation": "Eager loading (User::with('posts')) queries all related posts in a single IN (...) query, reducing database roundtrips from N+1 down to 2."
+  },
+  {
+    "question": "What is the primary role of the Laravel Service Container?",
+    "options": [
+      "A Docker container orchestrator embedded inside PHP",
+      "A powerful tool for managing class dependencies and performing dependency injection via reflection",
+      "A caching layer for compiled Blade views and config files",
+      "A session storage manager backed by Memcached"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "The Laravel service container is an IoC (Inversion of Control) container that resolves class dependencies automatically using PHP reflection and configured bindings."
+  },
+  {
+    "question": "How does HTTP Middleware in Laravel process requests and responses?",
+    "code": "public function handle(Request $request, Closure $next): Response {\n  // Pre-action\n  $response = $next($request);\n  // Post-action\n  return $response;\n}",
+    "options": [
+      "It compiles controller methods into native C extensions",
+      "It translates HTTP requests into WebSocket packets",
+      "It wraps HTTP requests like layers of an onion, executing logic before and after calling the next middleware closure",
+      "It intercepts database migrations during deployment"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Middleware forms a pipeline where each class can inspect or mutate incoming requests, pass execution forward via '$next($request)', and manipulate the returned response."
+  },
+  {
+    "question": "In modern Laravel (9+), what is the recommended way to declare Eloquent Accessors and Mutators?",
+    "code": "use Illuminate\\Database\\Eloquent\\Casts\\Attribute;\n\nprotected function firstName(): Attribute {\n  return Attribute::make(\n    get: fn (string $value) => ucfirst($value),\n    set: fn (string $value) => strtolower($value),\n  );\n}",
+    "options": [
+      "Overriding the save() method on the Model",
+      "Using legacy getFirstNameAttribute() and setFirstNameAttribute() methods",
+      "Declaring $casts = ['firstName' => 'uppercase']",
+      "Returning an 'Attribute::make(get: ..., set: ...)' instance"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "Modern Laravel uses the 'Attribute' class with named arguments 'get' and 'set' closures, unifying accessors and mutators in a single cleanly typed method."
+  },
+  {
+    "question": "What interface must a Laravel Job implement to be processed asynchronously by queue workers?",
+    "code": "class SendInvoiceEmail implements ShouldQueue {\n  use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;\n}",
+    "options": [
+      "ShouldQueue",
+      "QueueableInterface",
+      "AsyncJob",
+      "BackgroundProcess"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "Implementing 'ShouldQueue' tells Laravel to push the job onto a configured queue connection (Redis, SQS, database) rather than executing synchronously during the HTTP request."
+  },
+  {
+    "question": "How does Route Model Binding resolve models by a non-primary key column such as 'slug'?",
+    "code": "Route::get('/posts/{post:slug}', [PostController::class, 'show']);",
+    "options": [
+      "By setting protected $primaryKey = 'slug' globally on the Model",
+      "By adding the column name after a colon in the route parameter '{post:slug}'",
+      "By querying DB::table('posts') inside the route closure",
+      "By defining a custom global query scope"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Laravel supports customizing the route binding key inline by specifying '{post:slug}', which instructs Eloquent to locate the model where 'slug = ?'."
+  },
+  {
+    "question": "What does 'DB::transaction()' do if an unhandled Exception is thrown inside its closure?",
+    "code": "DB::transaction(function () {\n  User::create([...]);\n  Account::create([...]);\n});",
+    "options": [
+      "Logs an error to storage/logs and continues script execution",
+      "Commits the successful queries and ignores the failing query",
+      "Automatically rolls back all database operations made within the transaction and re-throws the exception",
+      "Saves transaction state in redis for manual retry"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'DB::transaction()' runs a set of operations within a database transaction; if any exception is thrown, the transaction is automatically rolled back to preserve ACID integrity."
+  },
+  {
+    "question": "What is the difference between a Laravel Gate and a Policy?",
+    "options": [
+      "Gates are deprecated in favor of PHP 8 attributes",
+      "Gates run on the database server, while Policies run in PHP",
+      "Gates are for API authentication, while Policies manage web sessions",
+      "Gates are closure-based authorization checks for general actions, while Policies are dedicated classes organized around specific models"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "Gates are lightweight authorization rules defined with 'Gate::define()', whereas Policies group authorization logic around specific Eloquent models (e.g., PostPolicy for Post model)."
+  },
+  {
+    "question": "How do you query soft-deleted records when using Laravel's 'SoftDeletes' trait on an Eloquent model?",
+    "code": "$users = User::withTrashed()->get();",
+    "options": [
+      "User::withTrashed()->get()",
+      "User::withDeleted()->get()",
+      "User::includeTrashed()->get()",
+      "User::allRecords()->get()"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "Models using 'SoftDeletes' automatically filter out records where 'deleted_at' is not null. Calling 'withTrashed()' includes soft-deleted records in the query."
+  },
+  {
+    "question": "What is the purpose of Laravel Form Request classes?",
+    "code": "public function store(StorePostRequest $request) { ... }",
+    "options": [
+      "To transform HTTP responses into XML or JSON",
+      "To encapsulate complex validation rules and authorization logic away from controllers",
+      "To simulate HTML forms using Artisan CLI commands",
+      "To store encrypted user session variables in cookies"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "Form Request classes handle authorization via 'authorize()' and validation via 'rules()', executing automatically before the controller method is invoked."
+  },
+  {
+    "question": "How do you declare a Local Query Scope in an Eloquent model?",
+    "code": "public function scopeActive(Builder $query): void {\n  $query->where('active', 1);\n}",
+    "options": [
+      "Decorating the method with #[Scope] attribute",
+      "Adding a protected static $scopeActive array",
+      "Prefixing the method name with 'scope' and accepting a query Builder instance as the first parameter",
+      "Declaring the method inside AppServiceProvider"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Local scopes are defined by prefixing the model method with 'scope' (e.g., scopeActive). They are then invoked on queries without the prefix: 'User::active()->get()'."
+  },
+  {
+    "question": "What does the '@csrf' directive in a Blade template generate?",
+    "code": "<form method=\"POST\" action=\"/profile\">\n  @csrf\n</form>",
+    "options": [
+      "A JavaScript listener that signs form payloads with HMAC-SHA256",
+      "An encrypted cookie header sent with every AJAX request",
+      "A Google reCAPTCHA v3 invisible widget script",
+      "A hidden input field with the session CSRF token: <input type=\"hidden\" name=\"_token\" value=\"...\">"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'@csrf' outputs a hidden HTML input containing the current session's CSRF token, which Laravel's VerifyCsrfToken middleware validates to prevent cross-site request forgery."
+  },
+  {
+    "question": "What package provides a real-time dashboard and metric monitoring for Redis queues in Laravel?",
+    "options": [
+      "Laravel Horizon",
+      "Laravel Telescope",
+      "Laravel Pulse",
+      "Laravel Sanctum"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Laravel Horizon provides a dashboard and code-driven configuration for Redis-powered queues, tracking job throughput, runtimes, and queue failures."
+  },
+  {
+    "question": "What is the purpose of Laravel API Resource classes (JsonResource)?",
+    "code": "return new UserResource($user);",
+    "options": [
+      "Caches REST API endpoints in Cloudflare edge workers",
+      "Provides a transformation layer that formats Eloquent models into structured JSON API responses",
+      "Validates incoming JSON payloads against OpenAPI 3 schemas",
+      "Generates database migrations from API endpoints"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "API Resources act as a presentation transformation layer, allowing developers to cleanly shape Eloquent models and relationships into JSON responses without leaking internal attributes."
+  },
+  {
+    "question": "How do you obtain an atomic distributed lock using Laravel's Cache facade to prevent race conditions?",
+    "code": "$lock = Cache::lock('processing-payouts', 10);\nif ($lock->get()) {\n  try { ... } finally { $lock->release(); }\n}",
+    "options": [
+      "Using Cache::mutex('key')",
+      "Using Cache::atomic('key')",
+      "Using Cache::lock('key', $seconds)->get()",
+      "Using DB::raw('LOCK TABLE')"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "Laravel's Cache facade provides atomic locks (backed by Redis, Memcached, DynamoDB, etc.) that can be acquired, evaluated, and released to prevent overlapping scheduled tasks or jobs."
+  },
+  {
+    "question": "In Eloquent relationships, which method defines a Many-to-Many relationship between models?",
+    "code": "public function roles() {\n  return $this->belongsToMany(Role::class);\n}",
+    "options": [
+      "morphToMany()",
+      "hasManyThrough()",
+      "hasMany()",
+      "belongsToMany()"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'belongsToMany()' establishes a many-to-many relationship involving an intermediary pivot table (e.g., role_user table linking users and roles)."
+  },
+  {
+    "question": "What Artisan command creates a new database migration file in Laravel?",
+    "code": "php artisan make:migration create_orders_table",
+    "options": [
+      "php artisan make:migration",
+      "php artisan db:create-migration",
+      "php artisan migrate:generate",
+      "php artisan schema:new"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "'php artisan make:migration <name>' generates a timestamped migration skeleton file inside the database/migrations directory."
+  },
+  {
+    "question": "What is the difference between 'singleton' and 'bind' when registering classes in Laravel's Service Container?",
+    "options": [
+      "'singleton' instances cannot receive constructor arguments",
+      "'singleton' resolves the class once and returns that identical instance on subsequent calls; 'bind' returns a fresh instance each time",
+      "'bind' registers static classes, while 'singleton' registers abstract interfaces",
+      "There is no difference in modern Laravel"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'$this->app->singleton()' registers a shared binding resolved only once throughout the request lifecycle, while '$this->app->bind()' instantiates a new object every time it is resolved."
+  },
+  {
+    "question": "What is the purpose of Laravel Telescope?",
+    "options": [
+      "A package for astronomical coordinate calculation in GIS applications",
+      "A high-availability load balancer for PHP-FPM sockets",
+      "An elegant debug assistant that inspects requests, exceptions, database queries, mail, and notifications",
+      "A real-time database replication monitor for MySQL"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Laravel Telescope is a developer debugging tool that provides deep insight into HTTP requests, database queries, exceptions, cache hits, queued jobs, and logs."
+  },
+  {
+    "question": "In Laravel's task scheduler, where are recurring scheduled commands registered?",
+    "code": "$schedule->command('emails:send')->dailyAt('01:00');",
+    "options": [
+      "Inside the AppServiceProvider boot() method",
+      "In the public/index.php bootstrap file",
+      "Directly in the server's /etc/crontab file per task",
+      "In the schedule method of App\\Console\\Kernel (or routes/console.php in Laravel 11)"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "Scheduled tasks are configured in 'app/Console/Kernel.php' (or 'routes/console.php' in Laravel 11) using a fluent schedule builder, with only a single Cron entry running 'artisan schedule:run' every minute."
   }
 ]

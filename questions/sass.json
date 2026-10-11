@@ -1,15 +1,254 @@
 [
   {
-    "question": "In modern Dart Sass, which directive is recommended over '@import' to load mixins and variables with dedicated namespaces?",
-    "code": "@use 'theme' as *;",
+    "question": "Why did Dart Sass introduce '@use' to replace the legacy '@import' directive?",
     "options": [
-      "@use",
-      "@forward",
-      "@include",
-      "@require"
+      "'@use' creates private namespaces, compiles each file only once, and prevents global scope pollution",
+      "'@import' was blocked by modern web browsers for security reasons",
+      "'@use' compiles CSS exclusively on client-side WebAssembly",
+      "'@use' is faster because it compresses images during build"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "The legacy '@import' dumped all variables, mixins, and functions into a single global namespace and duplicated CSS when files were imported multiple times. '@use' scopes imports to explicit namespaces."
+  },
+  {
+    "question": "What is the primary role of the '@forward' rule in modern Sass?",
+    "code": "// _index.scss\n@forward 'buttons';\n@forward 'forms';",
+    "options": [
+      "Sends compiled CSS to a remote CDN server",
+      "Re-exports mixins, functions, and variables from child modules so consumers can access them from a single central entrypoint",
+      "Forwards user inputs to browser event listeners",
+      "Delays compilation until the browser requests the file"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'@forward' loads a Sass module and makes its public members available when someone '@use's the forwarding file, allowing clean barrel file exports."
+  },
+  {
+    "question": "How does the parent selector '&' enable BEM (Block Element Modifier) class naming in SCSS?",
+    "code": ".card {\n  background: white;\n  &__header {\n    font-weight: bold;\n  }\n  &--featured {\n    border: 2px solid gold;\n  }\n}",
+    "options": [
+      "Selects child elements matching tag names header and featured",
+      "Creates nested HTML DOM elements inside the .card container",
+      "Appends the string directly to the parent selector, generating '.card__header' and '.card--featured'",
+      "Applies styles only when hovering over the card"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "When '&' is followed immediately by characters (without a space), Sass concatenates the characters directly to the parent selector string, ideal for BEM class conventions."
+  },
+  {
+    "question": "What is the difference between '@mixin' and '@function' in Sass?",
+    "options": [
+      "Mixins run in JavaScript, while functions run in C++",
+      "Functions output CSS selectors, while mixins calculate numbers",
+      "Functions can accept arguments, while mixins cannot",
+      "Mixins output CSS property rules and styles; functions perform calculations and return a single value via '@return'"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'@mixin' is used to generate reusable chunks of CSS declarations and structure, included via '@include'. '@function' is a pure callable that computes and returns a single value using '@return'."
+  },
+  {
+    "question": "What is the advantage of using a Placeholder Selector ('%placeholder') with '@extend' compared to standard classes?",
+    "code": "%button-base {\n  padding: 10px 15px;\n  border-radius: 4px;\n}\n.btn-primary {\n  @extend %button-base;\n}",
+    "options": [
+      "The placeholder rules are never emitted in the compiled CSS unless explicitly extended by another selector",
+      "Placeholders compile into CSS inline custom properties",
+      "Placeholders execute faster because they bypass Sass compilation",
+      "Placeholders can only be used inside media queries"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Placeholder selectors starting with '%' do not produce standalone CSS output. They only appear merged into the selector list of rulesets that explicitly '@extend' them."
+  },
+  {
+    "question": "How do you pass a block of styles into a mixin in Sass?",
+    "code": "@mixin responsive($breakpoint) {\n  @media (min-width: $breakpoint) {\n    @content;\n  }\n}",
+    "options": [
+      "Using the '@slot' directive",
+      "Using the '@content' directive inside the mixin definition",
+      "Using the '$children' parameter",
+      "Using the '@yield' statement"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'@content' acts as a placeholder inside a mixin where whatever block of styles passed to '@include mixin-name { ... }' is inserted."
+  },
+  {
+    "question": "What is the primary difference between the original Sass indented syntax and SCSS syntax?",
+    "options": [
+      "SCSS does not support variables or mixins",
+      "Sass compiles to CSS; SCSS compiles to Less",
+      "SCSS uses curly braces '{}' and semicolons ';' as a CSS superset; Sass indented syntax uses indentation and newlines",
+      "Sass indented syntax is the newer standard recommended by the Sass core team"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "SCSS (.scss) uses standard CSS block syntax with curly braces and semicolons (making every valid CSS file valid SCSS). The original Sass (.sass) uses Python-like indentation without braces."
+  },
+  {
+    "question": "What does the '!default' flag do on a variable declaration in Sass?",
+    "code": "$primary-color: #007bff !default;",
+    "options": [
+      "Resets the variable to browser user-agent defaults",
+      "Locks the variable from ever being modified in downstream files",
+      "Converts the variable into an exportable CSS custom property",
+      "Assigns the value only if the variable has not already been assigned or evaluates to null"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'!default' tells Sass: only set this variable if it does not already have a value. This allows users of a library to configure variables before importing the library."
+  },
+  {
+    "question": "Why are legacy color functions like 'lighten()' and 'darken()' deprecated in modern Dart Sass?",
+    "options": [
+      "They linearly alter HSL lightness rather than perceived brightness, often producing washed out or unnatural colors; 'color.scale()' is preferred",
+      "They conflict with standard CSS color functions in modern browsers",
+      "They do not support hex colors",
+      "They can only run on 8-bit displays"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "'lighten()' and 'darken()' add/subtract a fixed percentage from HSL lightness, which behaves unpredictably across different hues. Modern Sass recommends 'color.scale()' or 'color.adjust()' from the 'sass:color' module."
+  },
+  {
+    "question": "When is Interpolation '#{}' strictly required in Sass?",
+    "code": "@mixin generate-col($n) {\n  .col-#{$n} {\n    width: math.percentage(math.div($n, 12));\n  }\n}",
+    "options": [
+      "For all standard mathematical calculations",
+      "When embedding variable values into selector names, property names, or inside unquoted string contexts",
+      "When defining function parameters",
+      "When accessing elements inside a Sass list"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Sass variables cannot be evaluated bare inside selector names (e.g. '.col-$n' would be literal). Wrapping the variable in '#{$n}' interpolates its evaluated string value into the selector or property name."
+  },
+  {
+    "question": "What is the purpose of the '@at-root' directive in Sass?",
+    "code": ".parent {\n  color: red;\n  @at-root .standalone {\n    color: blue;\n  }\n}",
+    "options": [
+      "Targets the ':root' pseudo-class exclusively",
+      "Copies the styles directly to the HTML <head> element",
+      "Emits the nested ruleset at the root level of the CSS document instead of nesting it under the parent selector",
+      "Imports styles from the root filesystem directory"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'@at-root' causes one or more rules to be emitted at the top level of the compiled CSS stylesheet, escaping all enclosing parent selectors and nesting."
+  },
+  {
+    "question": "How do you perform division safely in modern Dart Sass since the bare '/' division operator was deprecated?",
+    "options": [
+      "divide($a, $b)",
+      "$a / $b with strict flag enabled",
+      "calc($a // $b)",
+      "math.div($a, $b) from the 'sass:math' module"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "Because '/' is used in standard CSS syntax (e.g. 'font: 16px/1.5 sans-serif' and grid syntax), Dart Sass deprecated arithmetic '/' and replaced it with 'math.div($a, $b)'."
+  },
+  {
+    "question": "How do you iterate through key-value pairs of a Sass Map using an '@each' loop?",
+    "code": "$theme-colors: ('primary': blue, 'danger': red);\n\n@each $name, $color in $theme-colors {\n  .btn-#{$name} { background-color: $color; }\n}",
+    "options": [
+      "@each $key, $value in $map { ... }",
+      "@for $key, $value in $map { ... }",
+      "@loop ($key: $value) from $map { ... }",
+      "@map-walk $map as $key => $value { ... }"
     ],
     "correct": 0,
     "difficulty": "Beginner",
-    "explanation": "@use loads members into a local namespace and ensures each stylesheet is only compiled once, replacing the legacy global @import."
+    "explanation": "The '@each $key, $value in $map' loop unpacks each key-value pair of a Sass map into two local loop variables on every iteration."
+  },
+  {
+    "question": "What directive allows a Sass library author to halt compilation with an informative error message when invalid arguments are provided?",
+    "code": "@if $weight < 100 or $weight > 900 {\n  @error \"Invalid font weight: #{$weight}. Must be between 100 and 900.\";\n}",
+    "options": [
+      "@throw",
+      "@error",
+      "@panic",
+      "@fatal"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'@error' prints a custom message with a full stack trace and immediately halts the Sass compilation process, making it essential for argument validation in design systems."
+  },
+  {
+    "question": "What implementation of Sass is the official reference implementation where all new language features are designed and developed?",
+    "options": [
+      "Ruby Sass",
+      "LibSass (C/C++)",
+      "Dart Sass",
+      "Node-Sass"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Dart Sass is the primary implementation of Sass. Ruby Sass and LibSass (and node-sass) have been deprecated and retired for several years."
+  },
+  {
+    "question": "What is the difference between '@for $i from 1 through 5' and '@for $i from 1 to 5' in Sass?",
+    "options": [
+      "There is no difference in modern Sass",
+      "'through' iterates in reverse order",
+      "'to' only works with floating point numbers",
+      "'through' includes the upper bound (1, 2, 3, 4, 5); 'to' excludes the upper bound (1, 2, 3, 4)"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "In Sass loops, 'from <start> through <end>' is inclusive of <end>, while 'from <start> to <end>' is exclusive of <end>."
+  },
+  {
+    "question": "How can you check the data type of a variable at compile time in Sass?",
+    "code": "@use 'sass:meta';\n$type: meta.type-of(5px); // returns 'number'",
+    "options": [
+      "meta.type-of($value)",
+      "typeof($value)",
+      "type($value)",
+      "$value.type"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "The 'type-of($value)' function (or 'meta.type-of($value)' from 'sass:meta') returns the data type as a string ('number', 'string', 'color', 'bool', 'list', 'map', 'null', etc.)."
+  },
+  {
+    "question": "What happens if a property in a Sass declaration block has a value of 'null'?",
+    "code": ".alert {\n  color: red;\n  background: null;\n}",
+    "options": [
+      "Sass outputs 'background: null;' literally in the CSS",
+      "Sass omits the property entirely from the compiled CSS output",
+      "Sass throws a NullPointerException during compilation",
+      "Sass sets the property to 'initial'"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "In Sass, 'null' represents the absence of a value. If a property declaration evaluates to 'null', Sass completely omits that property and its key from the final CSS output."
+  },
+  {
+    "question": "How do you access a value in a nested Sass map?",
+    "code": "@use 'sass:map';\n$theme: ( colors: ( primary: #007bff ) );\n$color: map.get($theme, 'colors', 'primary');",
+    "options": [
+      "map.nested($map, 'colors.primary')",
+      "$map['colors']['primary']",
+      "map.get($map, $key1, $key2)",
+      "map.find($map, 'primary')"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'map.get($map, $keys...)' accepts multiple key arguments to traverse deeply nested maps directly in a single function call."
+  },
+  {
+    "question": "What happens when using '@extend' inside a '@media' query in Sass?",
+    "options": [
+      "Sass halts compilation with a fatal circular dependency error",
+      "Sass automatically duplicates the extended styles into all media queries",
+      "Sass converts the media query into a container query",
+      "Sass only allows extending selectors that are defined inside that exact same '@media' block"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "Sass forbids '@extend' inside a '@media' block targeting a selector defined outside that media query, because it cannot guarantee the selector's applicability without generating contradictory CSS."
   }
 ]

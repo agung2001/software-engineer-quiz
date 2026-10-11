@@ -11,5 +11,242 @@
     "correct": 0,
     "difficulty": "Intermediate",
     "explanation": "Multi-stage builds leave compiler SDKs and build caches behind, copying only the compiled binary into a clean minimal base like Alpine or Distroless."
+  },
+  {
+    "question": "In a Dockerfile, how do 'ENTRYPOINT' and 'CMD' interact when both are defined in exec form?",
+    "code": "ENTRYPOINT [\"npm\", \"run\"]\nCMD [\"start\"]",
+    "options": [
+      "CMD overrides ENTRYPOINT completely if runtime arguments are provided",
+      "ENTRYPOINT defines the executable, while CMD provides default arguments that can be overridden at runtime",
+      "ENTRYPOINT executes during image build time, while CMD executes at container runtime",
+      "Both commands run concurrently inside the container"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "ENTRYPOINT sets the fixed container process, and CMD provides default arguments. When 'docker run app test' is executed, 'test' replaces CMD ('start') but ENTRYPOINT ('npm run') remains."
+  },
+  {
+    "question": "Why is 'COPY' generally preferred over 'ADD' in Dockerfiles when copying local files?",
+    "options": [
+      "'ADD' is deprecated in modern OCI image specifications",
+      "'COPY' executes asynchronously, while 'ADD' blocks the build engine",
+      "'COPY' only copies local files, whereas 'ADD' has automatic tar extraction and remote URL download side-effects",
+      "'COPY' automatically changes file permissions to 0777"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'COPY' is more transparent and predictable. 'ADD' includes features like fetching URLs and auto-extracting tar archives, which can introduce security risks or unexpected image layers."
+  },
+  {
+    "question": "Why should dependency manifests (like package.json or requirements.txt) be copied before application source code in a Dockerfile?",
+    "code": "COPY package*.json ./\nRUN npm install\nCOPY . .\nCMD [\"node\", \"index.js\"]",
+    "options": [
+      "To prevent Node.js from detecting environment variables during build",
+      "To ensure npm packages are given root ownership before source files",
+      "Because Docker cannot resolve relative paths if source files are copied first",
+      "To maximize Docker layer caching so dependencies are only reinstalled when manifests change"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Docker caches each build step. If code changes frequently but package.json does not, placing 'COPY package*.json' and 'npm install' earlier ensures cached layers are reused, speeding up builds."
+  },
+  {
+    "question": "What is the primary difference between a Docker Volume and a Bind Mount?",
+    "options": [
+      "Volumes are managed entirely by Docker in host storage (/var/lib/docker/volumes), whereas bind mounts map to any arbitrary host path",
+      "Bind mounts offer higher I/O throughput on macOS than named volumes",
+      "Volumes are deleted immediately when a container stops, while bind mounts persist",
+      "Bind mounts cannot be shared between multiple containers"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Volumes are managed within Docker's private storage area, isolated from the core host filesystem and ideal for backups, whereas bind mounts rely on host directory structures and permissions."
+  },
+  {
+    "question": "Why is it a security best practice to include a non-root 'USER' directive in production Dockerfiles?",
+    "code": "RUN adduser -D appuser\nUSER appuser",
+    "options": [
+      "Reduces RAM usage allocated to the container process",
+      "Prevents potential container breakout vulnerabilities from gaining root privileges on the host kernel",
+      "Allows the container to bind to privileged ports below 1024 without capabilities",
+      "Enables automatic encryption of container disk volumes"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Running as a non-root user adheres to the principle of least privilege, preventing an attacker who exploits an application flaw from having root capabilities inside or outside the container."
+  },
+  {
+    "question": "In the port mapping argument '-p 8080:80', which port is on the host machine and which is in the container?",
+    "code": "docker run -d -p 8080:80 nginx",
+    "options": [
+      "Both ports are opened on the host network interface",
+      "80 is on the host, forwarding traffic to 8080 inside the container",
+      "8080 is on the host, forwarding traffic to 80 inside the container",
+      "Traffic is round-robin load balanced between host port 80 and container port 8080"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "The format is '-p <host_port>:<container_port>'. Traffic hitting port 8080 on the host machine is forwarded to port 80 within the container."
+  },
+  {
+    "question": "What is the purpose of the '.dockerignore' file in the build context root?",
+    "options": [
+      "Disables logging output for specified services during container execution",
+      "Lists containers that should be ignored during docker system prune",
+      "Prevents Docker Hub from scanning images for CVE vulnerabilities",
+      "Prevents large, sensitive, or unnecessary files (.git, node_modules, .env) from being sent to the Docker build daemon"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'.dockerignore' excludes specified files and directories from the build context sent to the Docker daemon, speeding up builds and preventing credential leaks."
+  },
+  {
+    "question": "What problem does running a container with the '--init' flag solve?",
+    "code": "docker run --init -d my-node-app",
+    "options": [
+      "Inserts a tiny init process (like tini) as PID 1 to properly reap zombie child processes and forward OS signals",
+      "Initializes the container filesystem with default systemd units",
+      "Pre-allocates swap memory before launching application threads",
+      "Generates an SSL certificate authority inside the container"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "In Unix, PID 1 is responsible for reaping orphaned child processes and handling signals like SIGTERM. Without an init system, applications not designed as PID 1 can accumulate zombie processes."
+  },
+  {
+    "question": "How does Docker's 'HEALTHCHECK' instruction communicate container health status to Docker engine and orchestrators?",
+    "code": "HEALTHCHECK --interval=30s --timeout=3s \\\n  CMD curl -f http://localhost:8080/health || exit 1",
+    "options": [
+      "The command must return an HTTP 200 payload string 'OK' via stdout",
+      "A return code of 0 indicates healthy, while 1 indicates unhealthy",
+      "A return code of 200 marks healthy, and 500 marks unhealthy",
+      "The command must write a timestamp to /var/run/docker.sock"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Docker's HEALTHCHECK considers exit code 0 as healthy, 1 as unhealthy, and 2 as reserved. If retries fail with exit code 1, the container transitions to 'unhealthy'."
+  },
+  {
+    "question": "What is the key difference between 'ARG' and 'ENV' instructions in a Dockerfile?",
+    "options": [
+      "'ARG' values are automatically encrypted and cannot be inspected with docker inspect",
+      "'ENV' variables cannot be accessed during build steps",
+      "'ARG' variables are only available during image build time, while 'ENV' variables persist into running containers",
+      "'ENV' values can only be set from external shell scripts at container startup"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'ARG' defines build-time parameters passed via '--build-arg' that do not persist in the final container environment, whereas 'ENV' sets persistent environment variables available at runtime."
+  },
+  {
+    "question": "Which Docker network driver enables containers running on different physical Docker hosts to communicate without host-level routing?",
+    "options": [
+      "macvlan",
+      "bridge",
+      "host",
+      "overlay"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "The 'overlay' network driver creates a distributed virtual network across multiple Docker daemon hosts (commonly in Docker Swarm or Nomad), enabling cross-host container communication."
+  },
+  {
+    "question": "What happens when you send 'docker stop' to a running container versus 'docker kill'?",
+    "options": [
+      "'docker stop' sends SIGTERM and waits for a grace period before SIGKILL; 'docker kill' sends SIGKILL immediately",
+      "'docker kill' pauses container memory without releasing port bindings",
+      "'docker stop' deletes container data volumes automatically",
+      "There is no difference; both immediately terminate the container with SIGKILL"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'docker stop' attempts graceful shutdown by sending SIGTERM (default 10s grace period) so the process can finish requests and flush state, falling back to SIGKILL only if needed."
+  },
+  {
+    "question": "What command removes all stopped containers, unused networks, and dangling images in a single operation?",
+    "options": [
+      "docker clean --all",
+      "docker system prune",
+      "docker container purge",
+      "docker destroy --unused"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'docker system prune' cleans up dangling images, stopped containers, build cache, and networks not in use, freeing substantial disk space."
+  },
+  {
+    "question": "What core Linux kernel features provide process isolation and resource limitation respectively in Docker containers?",
+    "options": [
+      "chroot for isolation, and iptables for CPU quota capping",
+      "cgroups for isolation, and AppArmor for memory allocation",
+      "Namespaces for process isolation, and cgroups (control groups) for resource limits",
+      "SELinux for namespaces, and systemd slices for network virtualization"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "Linux Namespaces (PID, NET, MNT, IPC, UTS, USER) isolate what a process can see, while cgroups (control groups) restrict the amount of resources (CPU, RAM, I/O) a process group can consume."
+  },
+  {
+    "question": "In Docker Compose v2, how do you ensure service A only boots after service B passes its health check?",
+    "code": "services:\n  web:\n    depends_on:\n      db:\n        condition: service_healthy",
+    "options": [
+      "Using 'links: [\"db:healthy\"]'",
+      "Adding 'wait_for: db:healthy' under network settings",
+      "Setting 'health_link: true' on service A",
+      "Using 'depends_on' with 'condition: service_healthy'"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "Docker Compose allows configuring 'depends_on' with 'condition: service_healthy' so dependent containers wait until the prerequisite service's HEALTHCHECK returns healthy."
+  },
+  {
+    "question": "What is the effect of running a container with the '--read-only' flag?",
+    "code": "docker run --read-only -d my-secure-app",
+    "options": [
+      "Mounts the container's root filesystem as read-only, preventing unauthorized file modifications",
+      "Prevents the container from executing database write queries",
+      "Disables write access to mounted host bind volumes",
+      "Restricts the container process from writing to stdout and stderr"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "'--read-only' mounts the container root filesystem as immutable, enhancing container security. Applications needing temporary write space must mount tmpfs at /tmp or /var/run."
+  },
+  {
+    "question": "What technology powers Docker Buildx to cross-compile multi-architecture container images (e.g., building ARM64 on an x86_64 runner)?",
+    "code": "docker buildx build --platform linux/amd64,linux/arm64 -t app:v1 .",
+    "options": [
+      "Hardware hypervisor virtualization with KVM",
+      "BuildKit with QEMU emulation via Linux binfmt_misc",
+      "Source code transpilation into WebAssembly bytecode",
+      "Docker Swarm multi-node execution"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "Docker Buildx leverages BuildKit and user-space QEMU emulation registered via Linux binfmt_misc to execute CPU instructions for alien architectures during build stages."
+  },
+  {
+    "question": "What is the difference between 'docker exec -it <container> sh' and 'docker attach <container>'?",
+    "options": [
+      "'docker exec' only works on stopped containers",
+      "'docker attach' creates an isolated sub-container",
+      "'docker exec' spawns a new separate process inside the running container, while 'docker attach' connects to the container's main PID 1 process",
+      "'docker attach' automatically restarts the container with debug mode enabled"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'docker exec' launches a new process (e.g., a new shell session) within an existing container namespace, while 'docker attach' attaches your terminal to the existing container PID 1 stdout/stdin."
+  },
+  {
+    "question": "What Docker command flag limits a container to 512 megabytes of RAM and prevents memory ballooning?",
+    "options": [
+      "-l memory=512m",
+      "--ram-max 512",
+      "--cgroup-memory 512MB",
+      "-m 512m (or --memory 512m)"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'-m' or '--memory' sets the maximum memory limit for the container. If the container process exceeds this limit plus swap allowances, the Linux OOM killer will terminate it."
   }
 ]

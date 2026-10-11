@@ -11,5 +11,247 @@
     "correct": 0,
     "difficulty": "Advanced",
     "explanation": "useLayoutEffect fires synchronously immediately after DOM mutations before browser layout/paint, preventing visual flickering."
+  },
+  {
+    "question": "What is the primary difference between 'useMemo' and 'useCallback' in React?",
+    "options": [
+      "'useCallback' runs asynchronously in a web worker",
+      "'useMemo' caches the result of calling a function, while 'useCallback' caches the function definition itself",
+      "'useMemo' triggers re-renders on prop change, while 'useCallback' does not",
+      "There is no difference; 'useCallback' is an alias for 'useMemo'"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'useMemo(() => computeValue(a, b), [a, b])' memoizes the calculated return value. 'useCallback(fn, deps)' is shorthand for 'useMemo(() => fn, deps)', memoizing the function reference across renders."
+  },
+  {
+    "question": "Why is using array index as a 'key' prop when rendering dynamic lists considered an anti-pattern in React?",
+    "code": "{items.map((item, index) => (\n  <TodoItem key={index} item={item} />\n))}",
+    "options": [
+      "Array indices cause memory leaks in the Virtual DOM",
+      "React throws a fatal runtime warning in production bundles",
+      "If list items are reordered, filtered, or inserted at the top, React may preserve component state on the wrong items",
+      "Index keys prevent CSS transitions from firing"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Keys provide a stable identity for React's reconciliation diffing. If items are reordered or deleted, using index keys confuses React into matching wrong components, leading to broken uncontrolled state and UI bugs."
+  },
+  {
+    "question": "What is the primary architectural advantage of React Server Components (RSC)?",
+    "options": [
+      "They enable bidirectional real-time WebSockets by default",
+      "They replace HTML canvas rendering with WebAssembly",
+      "They eliminate the need for client-side routing",
+      "They execute exclusively on the server, adding 0 KB of JavaScript to the client bundle and accessing backend resources directly"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "React Server Components run only on the server and are serialized into a streaming format. Their code and dependencies (e.g. database SDKs, markdown parsers) are never sent to the browser bundle."
+  },
+  {
+    "question": "How does the 'useTransition' hook enhance user experience during heavy state updates?",
+    "code": "const [isPending, startTransition] = useTransition();\n\nfunction handleSearch(query) {\n  startTransition(() => {\n    setSearchResults(expensiveFilter(query));\n  });\n}",
+    "options": [
+      "Marks state updates as non-urgent transitions, keeping the user interface responsive and interactive (e.g., input typing)",
+      "Animates DOM nodes using CSS cubic-bezier transitions",
+      "Executes state calculations on a separate serverless worker",
+      "Debounces user inputs by 300 milliseconds automatically"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "'useTransition' lets you mark state updates as non-blocking transitions. Urgent updates (like typing in an input) interrupt the transition render, preventing UI freezes."
+  },
+  {
+    "question": "What happens when you mutate the '.current' property of a 'useRef' object?",
+    "code": "const countRef = useRef(0);\ncountRef.current += 1;",
+    "options": [
+      "React schedules an asynchronous re-render in the next tick",
+      "The value updates immediately without triggering a component re-render",
+      "React throws a MutationNotAllowedError in strict mode",
+      "The component immediately re-renders synchronously"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'useRef' returns a mutable container object whose '.current' property can hold any value. Mutating '.current' does not trigger a re-render, making it ideal for timers, DOM nodes, and instance variables."
+  },
+  {
+    "question": "Why does React invoke component render functions and effects twice in development mode under '<React.StrictMode>'?",
+    "options": [
+      "To verify that props adhere to TypeScript types",
+      "To warm up the browser's JavaScript JIT compiler cache",
+      "To help surface accidental side-effects and impure render logic before deploying to production",
+      "To test whether server-side rendering matches hydration output"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "In development, Strict Mode intentionally double-invokes lifecycles, functions, and effect setup/cleanup cycles to catch components that break pure rendering rules (like mutating external state during render)."
+  },
+  {
+    "question": "What is the purpose of 'useImperativeHandle' when paired with 'forwardRef'?",
+    "code": "useImperativeHandle(ref, () => ({\n  focusInput() { inputRef.current.focus(); },\n  reset() { inputRef.current.value = ''; }\n}));",
+    "options": [
+      "Forces child components to render synchronously",
+      "Bypasses React synthetic event bubbling",
+      "Enables imperative animations using WebGL",
+      "Customizes the instance value and methods exposed to parent components through a ref instead of exposing the raw DOM node"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "'useImperativeHandle' customizes the exposed handle on a forwarded ref, allowing a child component to expose a restricted, clean imperative API (e.g. focus(), scrollTo()) to its parent."
+  },
+  {
+    "question": "How does event bubbling behave with React Portals ('createPortal')?",
+    "code": "return createPortal(<Child />, document.body);",
+    "options": [
+      "Events bubble up according to the React component tree hierarchy, regardless of where the DOM portal is rendered in the HTML document",
+      "Event bubbling is completely severed and stopped at the portal boundary",
+      "Events bubble only to document.body and never to parent React components",
+      "Events are dispatched synchronously to window.addEventListener"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "Even though a portal renders its DOM node into a completely different physical location in the DOM (e.g. document.body), React synthetic events still bubble up through the React component tree."
+  },
+  {
+    "question": "What is the primary role of 'useDeferredValue'?",
+    "code": "const deferredQuery = useDeferredValue(query);",
+    "options": [
+      "Delays network fetch requests by a specified number of seconds",
+      "Defers updating an expensive part of the UI until more urgent updates have completed, displaying stale content in the interim",
+      "Memoizes the value in localStorage across browser tabs",
+      "Creates a promise that resolves after a microtask tick"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'useDeferredValue' takes a value and returns a deferred version of it that lags behind urgent state updates, letting React render urgent inputs first before recalculating expensive downstream trees."
+  },
+  {
+    "question": "Which Hook was introduced in React 18 to generate unique, stable IDs for accessible form inputs and labels across SSR and client hydration?",
+    "code": "const id = useId();\nreturn <><label htmlFor={id}>Email</label><input id={id} /></>;",
+    "options": [
+      "useA11yId",
+      "useUniqueKey",
+      "useId",
+      "useGuid"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'useId' generates stable, unique IDs across both server-side rendering and client-side hydration, preventing hydration mismatch warnings for form labels and aria attributes."
+  },
+  {
+    "question": "What Hook should external state management libraries (like Redux, Zustand) use in React 18+ to subscribe to external stores without tearing under concurrent rendering?",
+    "options": [
+      "useConcurrentStore",
+      "useExternalState",
+      "useStoreSubscription",
+      "useSyncExternalStore"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "'useSyncExternalStore' allows concurrent rendering to safely read from mutable stores outside of React without 'tearing' (inconsistencies where UI displays different values for the same state in one frame)."
+  },
+  {
+    "question": "Why can React Error Boundaries only be implemented using Class Components (or third-party wrapper libraries) rather than standard functional components?",
+    "options": [
+      "There is currently no functional hook equivalent for the 'componentDidCatch' or 'getDerivedStateFromError' lifecycles",
+      "Functional components cannot catch runtime JavaScript exceptions",
+      "Class components run on a dedicated worker thread",
+      "React intends to deprecate error boundaries in favor of try/catch"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "React has not yet introduced hook equivalents for 'getDerivedStateFromError' and 'componentDidCatch', meaning Error Boundaries must still be authored as class components (e.g., using react-error-boundary)."
+  },
+  {
+    "question": "How does 'React.memo' optimize functional component rendering by default?",
+    "code": "const MemoizedCard = React.memo(Card);",
+    "options": [
+      "Performs a deep recursive comparison across all nested prop objects",
+      "Performs a shallow equality comparison (===) on props, skipping re-render if props have not changed",
+      "Caches rendered HTML strings in localStorage",
+      "Prevents the component from re-rendering even if internal useState changes"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'React.memo' is a higher-order component that performs shallow comparison on props. If props are unchanged, React reuses the last rendered output instead of re-evaluating the component."
+  },
+  {
+    "question": "What is the consequence of violating the 'Rules of Hooks' by calling a hook inside a conditional 'if' statement?",
+    "code": "if (isLoggedIn) {\n  useEffect(() => { ... }, []);\n}",
+    "options": [
+      "React converts the component into an asynchronous generator",
+      "The conditional hook executes on the server only",
+      "React relies on the consistent call order of hooks across renders to match state; conditional calls desynchronize internal state arrays and cause crashes",
+      "The effect runs every single millisecond"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "React stores hook states in an internal linked list. Hooks must be called in the exact same order on every render for React to correctly associate state cells with their respective hooks."
+  },
+  {
+    "question": "What is the purpose of 'flushSync' in React-DOM?",
+    "code": "flushSync(() => {\n  setCount(count + 1);\n});\n// DOM is guaranteed updated here",
+    "options": [
+      "Synchronizes state with a remote WebSocket server",
+      "Flushes the browser HTTP cache",
+      "Clears all active setTimeout timers in the component",
+      "Forces React to flush all scheduled updates inside the callback synchronously, updating the DOM immediately"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "'flushSync' forces React to synchronously re-render and commit updates made inside its callback to the DOM, useful when third-party DOM libraries require immediately updated DOM measurements."
+  },
+  {
+    "question": "How does code splitting work with 'React.lazy()' and '<Suspense>'?",
+    "code": "const HeavyChart = React.lazy(() => import('./HeavyChart'));\n\n<Suspense fallback={<Spinner />}>\n  <HeavyChart />\n</Suspense>",
+    "options": [
+      "Dynamic import() splits HeavyChart into a separate chunk loaded on demand, displaying the fallback Spinner while loading",
+      "The component is rendered in an off-screen web worker",
+      "HeavyChart is pre-rendered into an SVG image during build",
+      "Suspense compiles the component into WebAssembly bytecode"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "'React.lazy()' takes a dynamic 'import()' statement to load component chunks on demand, while '<Suspense>' coordinates the loading state by displaying a fallback UI until the chunk arrives."
+  },
+  {
+    "question": "What problem occurs when passing an inline object or function to a Context Provider without memoization?",
+    "code": "<ThemeContext.Provider value={{ theme, toggleTheme }}>\n  {children}\n</ThemeContext.Provider>",
+    "options": [
+      "Context values cannot be JavaScript objects",
+      "Every consumer component will re-render on every parent render because the object reference changes every time",
+      "The context value will be lost on page reload",
+      "React throws a maximum update depth exceeded error"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Passing a new object literal directly creates a fresh memory reference on every parent render, causing all context consumers to re-render even if 'theme' did not change. Wrapping with 'useMemo' fixes this."
+  },
+  {
+    "question": "What directive in React Server Components indicates that a component file should be bundled and executed on the client browser?",
+    "code": "\"use client\";\n\nimport { useState } from 'react';",
+    "options": [
+      "\"client only\"",
+      "\"use browser\"",
+      "\"use client\"",
+      "\"@client-component\""
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "The '\"use client\"' directive placed at the top of a file marks the boundary between server components and client components, telling bundlers that the component and its imports must be bundled for the client."
+  },
+  {
+    "question": "What cleanup pattern should be returned by a 'useEffect' hook when subscribing to events or timers?",
+    "code": "useEffect(() => {\n  const handler = () => console.log('resize');\n  window.addEventListener('resize', handler);\n  return () => window.removeEventListener('resize', handler);\n}, []);",
+    "options": [
+      "Pass an AbortController to the dependency array",
+      "Call window.close() inside the effect body",
+      "Return a boolean true indicating successful setup",
+      "Return a cleanup function that unsubscribes listeners or cancels timers"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Returning a cleanup function from 'useEffect' ensures listeners, intervals, and subscriptions are cleaned up when the component unmounts or before the effect re-runs with new dependencies."
   }
 ]

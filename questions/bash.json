@@ -11,5 +11,250 @@
     "correct": 0,
     "difficulty": "Intermediate",
     "explanation": "'set -e' instructs Bash to exit immediately if any pipeline command fails, preventing silent cascading errors."
+  },
+  {
+    "question": "What is the key difference between the single bracket test '[ ... ]' and double bracket test '[[ ... ]]' in Bash?",
+    "code": "if [[ $str =~ ^[0-9]+$ ]]; then\n  echo \"Numeric\"\nfi",
+    "options": [
+      "'[ ... ]' is an internal Bash keyword while '[[ ... ]]' is an external POSIX utility",
+      "'[[ ... ]]' supports regex pattern matching (=~) and prevents word-splitting of variables",
+      "'[[ ... ]]' cannot evaluate string comparisons or equality",
+      "'[ ... ]' supports logical operators && and || directly inside the brackets"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'[[ ... ]]' is a Bash keyword that provides advanced features like regex matching with '=~', globbing, and safe unquoted variable expansion without word-splitting."
+  },
+  {
+    "question": "In Unix/Linux shells, what does the redirection operator '2>&1' accomplish?",
+    "code": "app.sh > output.log 2>&1",
+    "options": [
+      "Duplicates stdout into two concurrent file streams",
+      "Redirects stdout to file descriptor 2 while closing stderr",
+      "Redirects file descriptor 2 (stderr) to the destination of file descriptor 1 (stdout)",
+      "Reads inputs from both stdout and stderr simultaneously"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'2>&1' redirects standard error (fd 2) to the current destination of standard output (fd 1), ensuring both error and standard outputs are captured."
+  },
+  {
+    "question": "What is the purpose of 'set -o pipefail' when writing robust shell scripts?",
+    "code": "set -o pipefail\ncat non_existent_file.txt | grep 'pattern' | sort",
+    "options": [
+      "Ignores SIGPIPE signals sent to intermediate commands",
+      "Terminates pipes if any command produces more than 64KB of buffer",
+      "Runs all pipeline segments sequentially instead of concurrently",
+      "Ensures the pipeline exit status is the exit code of the last command that failed (non-zero)"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "By default, a pipeline returns the exit code of the final command. 'pipefail' causes the pipeline to return the exit code of the rightmost failing command."
+  },
+  {
+    "question": "How do quoted '\"$@\"' and quoted '\"$*\"' differ when handling positional arguments?",
+    "code": "for arg in \"$@\"; do ... done\nfor arg in \"$*\"; do ... done",
+    "options": [
+      "\"$@\" expands to separate words for each argument (\"$1\" \"$2\"), while \"$*\" expands into a single word joined by IFS",
+      "\"$*\" preserves positional argument whitespace while \"$@\" collapses spaces",
+      "\"$@\" ignores options starting with a hyphen, while \"$*\" includes them",
+      "There is no difference in modern Bash versions"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "\"$@\" expands positional arguments as separate quoted strings (\"$1\" \"$2\" ...), whereas \"$*\" concatenates all arguments into a single string separated by the first character of IFS."
+  },
+  {
+    "question": "Which special parameter in Bash holds the exit status code of the most recently executed foreground command?",
+    "options": [
+      "$!",
+      "$?",
+      "$$",
+      "$#"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'$?' contains the numeric exit code (0 for success, non-zero for failure) of the most recent foreground command."
+  },
+  {
+    "question": "What does the parameter expansion syntax '${VAR:-default}' do if VAR is unset or empty?",
+    "code": "USER_NAME=${1:-guest}\necho \"Hello, $USER_NAME\"",
+    "options": [
+      "Throws a fatal error terminating the script",
+      "Permanently assigns 'default' to VAR and exports it to the environment",
+      "Returns 'default' as an expression value without modifying VAR",
+      "Deletes VAR and clears the environment variable"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'${VAR:-default}' evaluates to 'default' if VAR is unset or null, leaving the original variable unchanged. In contrast, '${VAR:=default}' would assign the default to VAR."
+  },
+  {
+    "question": "Which Bash construct executes a cleanup function whenever the script exits or receives interruption signals like SIGINT or SIGTERM?",
+    "code": "cleanup() {\n  rm -rf \"$TMP_DIR\"\n}\ntrap cleanup EXIT SIGINT SIGTERM",
+    "options": [
+      "The 'nohup' utility",
+      "The 'defer' keyword",
+      "The 'finally' block",
+      "The 'trap' built-in command"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "The 'trap' command registers signal handlers to intercept operating system signals or pseudo-signals like EXIT to execute cleanup routines."
+  },
+  {
+    "question": "What does Process Substitution syntax '<(command)' achieve in Bash?",
+    "code": "diff -u <(sort file1.txt) <(sort file2.txt)",
+    "options": [
+      "Runs the command and presents its output as a file descriptor or named pipe for reading",
+      "Spawns the command inside a separate background cgroup container",
+      "Saves the command output to a permanent hidden file in /tmp",
+      "Redirects standard input directly into standard error"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "Process substitution '<(command)' runs the command asynchronously and connects its output to a FIFO pipe or /dev/fd file, allowing commands expecting file paths to read streaming data."
+  },
+  {
+    "question": "Which parameter expansion removes the shortest matching prefix from a variable's value?",
+    "code": "path=\"/var/log/nginx/access.log\"\necho \"${path#*/}\"",
+    "options": [
+      "${path##*/}",
+      "${path#*/}",
+      "${path%/*}",
+      "${path%%/*}"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'${var#pattern}' removes the shortest match from the start of the string, whereas '${var##pattern}' removes the longest match."
+  },
+  {
+    "question": "What is the special variable in Bash that stores the Process ID (PID) of the most recently executed background job?",
+    "code": "python server.py &\nPID=$!",
+    "options": [
+      "$0",
+      "$$",
+      "$!",
+      "$_"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'$!' evaluates to the PID of the most recent background job launched with '&', whereas '$$' evaluates to the PID of the current shell."
+  },
+  {
+    "question": "How do you quote a Here-Document (heredoc) delimiter to prevent variable expansion inside the block?",
+    "code": "cat <<'EOF'\n$USER should not be expanded\nEOF",
+    "options": [
+      "Use double angle brackets followed by a colon, e.g., <<:EOF",
+      "Add the '--raw' flag to the command",
+      "Prefix every line inside the block with a backslash",
+      "Quote the delimiter token, e.g., <<'EOF'"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "Enclosing the delimiter in single or double quotes (e.g., <<'EOF') tells the shell to treat the text verbatim without performing variable or command substitution."
+  },
+  {
+    "question": "How do you declare an associative array (key-value hash map) in Bash 4.0+?",
+    "code": "declare -A capitals\ncapitals[\"France\"]=\"Paris\"",
+    "options": [
+      "declare -A capitals",
+      "declare -a capitals",
+      "set -map capitals",
+      "array --associative capitals"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'declare -A' creates an associative array (string indexed), whereas 'declare -a' creates an indexed array (integer indexed)."
+  },
+  {
+    "question": "When using 'find' together with 'xargs', why is '-print0' paired with 'xargs -0' considered a security and reliability best practice?",
+    "code": "find . -type f -name \"*.log\" -print0 | xargs -0 rm",
+    "options": [
+      "It compresses file paths in memory to prevent buffer overflows",
+      "It delimits filenames using the null character (\\0), safely handling names with spaces and newlines",
+      "It prompts the user for confirmation before executing each command",
+      "It bypasses POSIX permission checks for root-owned files"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Because filenames in Unix can contain spaces, tabs, quotes, or newlines, null delimiters ('\\0') ensure argument boundaries are parsed unambiguously."
+  },
+  {
+    "question": "What happens when you execute the 'exec' built-in command followed by a program in a Bash script?",
+    "code": "exec /usr/bin/node server.js",
+    "options": [
+      "The command is run in dry-run mode without mutating system state",
+      "The program is detached and run as an isolated daemon process",
+      "The current shell process is replaced by the new program without creating a new PID",
+      "A child subshell is spawned and the parent waits for its termination"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "'exec' replaces the current shell image in memory with the specified executable. The PID remains identical, which is especially useful in Docker entrypoints for signal forwarding."
+  },
+  {
+    "question": "What is the fundamental difference between executing a script via 'source script.sh' (or '. script.sh') versus './script.sh'?",
+    "options": [
+      "'./script.sh' shares memory with the parent process, whereas 'source' does not",
+      "'./script.sh' runs without execution (+x) permissions",
+      "'source' executes commands inside a sandboxed subshell",
+      "'source' runs the script in the current shell environment, preserving variable and directory changes"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'source' (or '.') evaluates the file within the current shell context, allowing it to modify environment variables and current working directory."
+  },
+  {
+    "question": "What does the 'set -u' (nounset) option enforce in a Bash script?",
+    "code": "set -u\necho \"Deploying to $ENV_NAME\"",
+    "options": [
+      "Treats unset variables as an error and immediately exits",
+      "Restricts variable reassignment once initialized",
+      "Prevents scripts from running as the root user",
+      "Disables Unicode characters in standard output"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'set -u' (or 'set -o nounset') causes Bash to emit an error and exit if an unbound/undefined variable is evaluated, catching typos and missing configurations."
+  },
+  {
+    "question": "Which command substitution syntax is preferred in modern Bash scripts because it supports clean nesting?",
+    "code": "files=$(ls -1 $(dirname \"$path\"))",
+    "options": [
+      "`command` (backticks)",
+      "$(command)",
+      "${!command}",
+      "@{command}"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'$(command)' is the POSIX standard syntax that allows intuitive nesting without complex backslash escaping required by legacy backticks (` `)."
+  },
+  {
+    "question": "How do you scope a variable to exist solely within the executing Bash function?",
+    "code": "calculate() {\n  local total=100\n  echo \"$total\"\n}",
+    "options": [
+      "var total=100",
+      "private total=100",
+      "local total=100",
+      "let total=100"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "The 'local' built-in restricts a variable's visibility and lifetime to the function in which it was declared and any child functions called from it."
+  },
+  {
+    "question": "In Bash, what is the difference between chaining commands with '&&' versus ';'?",
+    "code": "cmd1 && cmd2\ncmd1 ; cmd2",
+    "options": [
+      "';' stops script execution if cmd1 returns an error",
+      "';' executes cmd1 and cmd2 concurrently in parallel",
+      "'&&' pipes the standard output of cmd1 directly into cmd2",
+      "'&&' executes cmd2 only if cmd1 succeeds (exit code 0), while ';' executes cmd2 unconditionally"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'&&' is a conditional logical AND operator that requires the prior command to exit with code 0 before proceeding, whereas ';' executes sequentially regardless of success or failure."
   }
 ]

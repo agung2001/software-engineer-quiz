@@ -3,13 +3,253 @@
     "question": "What will be printed to the console given this JavaScript microtask queue scenario?",
     "code": "console.log(1);\nsetTimeout(() => console.log(2), 0);\nPromise.resolve().then(() => console.log(3));\nconsole.log(4);",
     "options": [
-      "1, 2, 3, 4",
       "1, 4, 3, 2",
+      "1, 2, 3, 4",
       "1, 4, 2, 3",
       "3, 1, 4, 2"
     ],
-    "correct": 1,
+    "correct": 0,
     "difficulty": "Intermediate",
     "explanation": "Synchronous code runs first (1, 4), then Microtasks from Promise callbacks resolve (3), and finally Macrotasks from setTimeout execute (2)."
+  },
+  {
+    "question": "What is the Temporal Dead Zone (TDZ) in JavaScript?",
+    "code": "console.log(x);\nlet x = 10;",
+    "options": [
+      "The duration an asynchronous callback waits in the event loop queue",
+      "The period between entering the scope and variable declaration where accessing 'let' or 'const' throws a ReferenceError",
+      "The state when a WeakMap key has been garbage collected",
+      "The delay between browser layout calculation and screen paint"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Variables declared with 'let' and 'const' are hoisted to the top of their block scope, but remain uninitialized in the TDZ until execution reaches the declaration line."
+  },
+  {
+    "question": "How do arrow functions handle the 'this' keyword compared to traditional function declarations?",
+    "code": "const obj = {\n  val: 42,\n  regular: function() { return this.val; },\n  arrow: () => this.val\n};",
+    "options": [
+      "Arrow functions set 'this' to null in strict mode",
+      "Arrow functions automatically bind 'this' to the object containing them",
+      "Arrow functions do not bind their own 'this'; they inherit 'this' lexically from the enclosing scope",
+      "Arrow functions can have their 'this' rebound using .bind() or .call()"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Arrow functions capture the 'this' binding of the surrounding lexical context at creation time and cannot be reassigned with call, apply, or bind."
+  },
+  {
+    "question": "What is the primary advantage of 'structuredClone()' over 'JSON.parse(JSON.stringify(obj))' for deep copying objects?",
+    "code": "const copy = structuredClone(original);",
+    "options": [
+      "Compresses memory consumption using Brotli encoding",
+      "Executes asynchronously in a background Web Worker thread",
+      "Copies prototype chains and class methods",
+      "Supports circular references, Map, Set, Date, RegExp, and TypedArrays without data loss"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'structuredClone()' correctly handles circular references, RegExp, Map, Set, Date, and ArrayBuffers, none of which can be safely duplicated via JSON serialization."
+  },
+  {
+    "question": "What is the difference between 'WeakMap' and a regular 'Map' regarding garbage collection?",
+    "options": [
+      "WeakMap holds weak references to its object keys, allowing them to be garbage-collected if no other references exist",
+      "WeakMap is cleared automatically every 60 seconds by the browser engine",
+      "WeakMap stores values on the disk instead of RAM",
+      "WeakMap allows primitive strings and numbers as keys"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "Keys in a WeakMap must be objects (or non-registered symbols) and are held weakly. If an object key is dereferenced everywhere else, it and its associated entry are freed by the GC, preventing memory leaks."
+  },
+  {
+    "question": "What is the output of the following Nullish Coalescing (??) versus Logical OR (||) expression?",
+    "code": "const count = 0;\nconst a = count || 10;\nconst b = count ?? 10;\nconsole.log(a, b);",
+    "options": [
+      "0 0",
+      "10 0",
+      "10 10",
+      "0 10"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'||' checks for any falsy value (0, false, '', null, undefined, NaN), so 0 triggers the fallback 10. '??' only checks for null or undefined, so 0 is preserved."
+  },
+  {
+    "question": "Which Proxy trap intercepts the 'in' operator check on an object?",
+    "code": "const p = new Proxy(target, {\n  /* trap */\n});\n'id' in p;",
+    "options": [
+      "includes(target, prop)",
+      "get(target, prop)",
+      "has(target, prop)",
+      "check(target, prop)"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "The 'has' trap intercepts operations that evaluate property presence, including the 'in' operator ('prop in proxy') and 'Reflect.has()'."
+  },
+  {
+    "question": "How does 'Promise.allSettled()' differ from 'Promise.all()'?",
+    "options": [
+      "'Promise.allSettled()' only resolves if at least one promise succeeds",
+      "'Promise.allSettled()' aborts remaining promises on failure",
+      "'Promise.all()' returns promises sequentially instead of in parallel",
+      "'Promise.allSettled()' waits for all promises to settle regardless of rejections, returning an array of outcome objects; 'Promise.all()' rejects immediately on first error"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'Promise.all()' short-circuits and rejects as soon as any input promise rejects. 'Promise.allSettled()' waits for all promises to finish and returns results with status 'fulfilled' or 'rejected'."
+  },
+  {
+    "question": "What will this generator function output when invoked?",
+    "code": "function* counter() {\n  yield 1;\n  yield 2;\n  return 3;\n}\nconst gen = counter();\nconsole.log([...gen]);",
+    "options": [
+      "[1, 2]",
+      "[1, 2, 3]",
+      "[3]",
+      "[undefined, undefined]"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "The spread operator '...' and 'for...of' loops iterate over a generator until 'done: true'. The value returned by 'return' has 'done: true' and is excluded from iteration."
+  },
+  {
+    "question": "What is the difference between 'event.stopPropagation()' and 'event.stopImmediatePropagation()'?",
+    "options": [
+      "'stopPropagation()' halts bubbling while 'stopImmediatePropagation()' halts capturing",
+      "'stopImmediatePropagation()' prevents the event from reaching parent elements AND halts other listeners registered on the same element",
+      "'stopImmediatePropagation()' cancels the default browser action (like following links)",
+      "There is no difference in modern DOM standards"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'stopPropagation()' stops the event from traversing further up/down the DOM tree, but remaining listeners on the current element still fire. 'stopImmediatePropagation()' stops both."
+  },
+  {
+    "question": "Which ECMAScript 2023 non-mutating array method returns a sorted copy of an array without modifying the original in-place?",
+    "code": "const original = [3, 1, 2];\nconst sorted = original.toSorted();",
+    "options": [
+      "asSorted()",
+      "sort()",
+      "toSorted()",
+      "copySorted()"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "ES2023 introduced non-mutating counterparts to common array methods: 'toSorted()', 'toReversed()', 'toSpliced()', and 'with()', which return modified shallow copies."
+  },
+  {
+    "question": "What is the output of the following closure example?",
+    "code": "for (var i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 10);\n}",
+    "options": [
+      "0, 0, 0",
+      "0, 1, 2",
+      "undefined, undefined, undefined",
+      "3, 3, 3"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Because 'var' is function-scoped (not block-scoped), all timer callbacks share the exact same 'i' variable, which equals 3 by the time the timers fire."
+  },
+  {
+    "question": "What is the purpose of the 'Symbol.iterator' well-known symbol in JavaScript?",
+    "code": "const iterableObj = {\n  [Symbol.iterator]: function* () {\n    yield 1;\n    yield 2;\n  }\n};",
+    "options": [
+      "Defines the default iteration protocol allowing the object to be consumed by 'for...of' and the spread operator",
+      "Converts the object into an immutable JSON string",
+      "Registers the object as a database cursor with indexedDB",
+      "Marks the object for automatic garbage collection"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Objects implementing a method keyed by '[Symbol.iterator]' satisfy the Iterable protocol, enabling consumption via 'for...of', spread '...', and 'Array.from()'."
+  },
+  {
+    "question": "What does 'Object.freeze()' do compared to 'Object.seal()'?",
+    "options": [
+      "'seal()' is a deep recursive freeze, while 'freeze()' is shallow",
+      "'freeze()' prevents adding, deleting, and modifying existing properties (writable: false); 'seal()' prevents adding or deleting but allows modifying existing writable properties",
+      "'freeze()' converts properties to getters and setters",
+      "'seal()' prevents prototype access while 'freeze()' does not"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'Object.freeze()' makes an object completely immutable (shallowly): no properties added, removed, or changed. 'Object.seal()' prevents adding or deleting properties, but existing writable properties can still be updated."
+  },
+  {
+    "question": "What is the primary difference between CommonJS (CJS) and ECMAScript Modules (ESM)?",
+    "options": [
+      "ESM only allows exporting default values, not named exports",
+      "CJS is natively supported in web browser script tags without build tools",
+      "ESM imports are statically analyzed at compile/parse time and support top-level await; CJS 'require()' loads synchronously at runtime",
+      "CJS does not support caching of required modules"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "ESM imports ('import/export') are static, enabling tree-shaking and asynchronous module resolution, whereas CommonJS 'require()' is dynamic, synchronous, and evaluated during runtime execution."
+  },
+  {
+    "question": "What does the 'queueMicrotask()' function do?",
+    "code": "queueMicrotask(() => {\n  console.log('Microtask');\n});",
+    "options": [
+      "Spawns a new Web Worker thread to execute the callback",
+      "Schedules a macro-task task after 4ms timer clamping",
+      "Defers execution until the browser enters an idle state",
+      "Explicitly schedules a callback into the microtask queue, running right after the current script and before the event loop continues"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "'queueMicrotask()' queues a function to be executed at the end of the current turn of the JavaScript execution context, before rendering or yielding to macrotasks."
+  },
+  {
+    "question": "What happens when accessing an undeclared property using optional chaining on 'null'?",
+    "code": "const user = null;\nconsole.log(user?.address?.city);",
+    "options": [
+      "Immediately short-circuits and evaluates to 'undefined' without throwing a TypeError",
+      "Throws 'TypeError: Cannot read properties of null'",
+      "Evaluates to 'null'",
+      "Throws 'ReferenceError: user is not defined'"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "Optional chaining ('?.') immediately short-circuits and returns 'undefined' if the reference before '?.' is null or undefined, avoiding TypeErrors."
+  },
+  {
+    "question": "What is the value of 'typeof NaN' in JavaScript?",
+    "options": [
+      "\"nan\"",
+      "\"number\"",
+      "\"undefined\"",
+      "\"object\""
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "In JavaScript according to IEEE 754 floating-point specification, NaN ('Not a Number') is considered a numeric data type, so 'typeof NaN' is 'number'."
+  },
+  {
+    "question": "What mechanism does the V8 JavaScript engine use to optimize frequently called 'hot' functions?",
+    "options": [
+      "Interpreting AST trees directly with no bytecode generation",
+      "Transpiling JavaScript to WebAssembly ahead of time",
+      "JIT (Just-In-Time) compilation using an optimizing compiler (TurboFan) based on runtime type profiling",
+      "Offloading CPU intensive loops to GPU compute shaders"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "V8 uses an interpreter (Ignition) to run bytecode quickly and profiles execution. When a function is deemed 'hot', the optimizing compiler (TurboFan) compiles it into highly optimized native machine code based on type feedback."
+  },
+  {
+    "question": "What will 'console.log(1 + '2' + 3)' and 'console.log(1 + 2 + '3')' print respectively?",
+    "code": "console.log(1 + '2' + 3);\nconsole.log(1 + 2 + '3');",
+    "options": [
+      "\"6\" and \"33\"",
+      "\"123\" and \"123\"",
+      "6 and 6",
+      "\"123\" and \"33\""
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Addition evaluates left-to-right. In the first case, 1 + '2' coerces 1 to string yielding '12', then '12' + 3 yields '123'. In the second case, 1 + 2 evaluates numerically to 3, then 3 + '3' yields '33'."
   }
 ]

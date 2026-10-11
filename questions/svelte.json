@@ -1,14 +1,256 @@
 [
   {
-    "question": "How does Svelte achieve high performance without relying on a Virtual DOM at runtime?",
+    "question": "What is the primary architectural difference between Svelte and frameworks like React or Vue?",
     "options": [
-      "It compiles components at build time into targeted vanilla JavaScript that surgically updates the DOM",
-      "It runs a lightweight WebAssembly reconciliation engine in a Web Worker",
-      "It intercepts DOM mutations using native MutationObserver",
-      "It renders everything directly into an offscreen HTML5 Canvas"
+      "Svelte compiles components into efficient imperative vanilla JavaScript at build time without using a Virtual DOM",
+      "Svelte renders components using a C++ browser plugin",
+      "Svelte runs exclusively on Node.js server side without client-side hydration",
+      "Svelte requires JSX syntax for all component templates"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "Unlike React or Vue which diff a Virtual DOM in the browser at runtime, Svelte is a compiler that converts declarative components into surgical vanilla JavaScript that updates the DOM directly."
+  },
+  {
+    "question": "In Svelte 5, what Rune replaces legacy 'let count = 0;' to declare reactive state in any JavaScript/TypeScript file?",
+    "code": "let count = $state(0);",
+    "options": [
+      "$reactive()",
+      "$state()",
+      "$ref()",
+      "$signal()"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "In Svelte 5, '$state()' is the core rune for declaring reactive state. It can be used both inside Svelte components and in regular .svelte.js/.ts files."
+  },
+  {
+    "question": "What Rune is used in Svelte 5 to express derived/computed values that automatically update when their dependencies change?",
+    "code": "let double = $derived(count * 2);",
+    "options": [
+      "$memo()",
+      "$computed()",
+      "$derived()",
+      "$calc()"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'$derived(expression)' creates a reactive derived value in Svelte 5, replacing the legacy '$: double = count * 2;' reactive declaration syntax."
+  },
+  {
+    "question": "Why should you provide a unique key in Svelte's '{#each}' block when rendering dynamic lists?",
+    "code": "{#each items as item (item.id)}\n  <TodoItem {item} />\n{/each}",
+    "options": [
+      "Prevents memory leaks in CSS animations",
+      "Assigns HTML id attributes to each rendered element",
+      "Sorts the array automatically by the key value",
+      "Ensures Svelte updates and reorders existing DOM nodes rather than mutating or re-creating nodes at the wrong indices"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Keying each blocks with '(item.id)' instructs Svelte's diffing engine to associate each DOM node with a specific identity, ensuring correct state preservation when list items are inserted, deleted, or reordered."
+  },
+  {
+    "question": "What does prefixing a store variable with '$' do in a Svelte component script or template?",
+    "code": "import { count } from './store.js';\n// Read or write directly:\n$count += 1;",
+    "options": [
+      "Automatically subscribes to the store on mount and unsubscribes when the component unmounts",
+      "Converts the store into a local session cookie",
+      "Freezes the store from further mutations",
+      "Converts the store value into a currency formatted string"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "The '$store' prefix is syntactic sugar that automatically creates a subscription to the store and manages unsubscription on component destruction, providing seamless reactivity."
+  },
+  {
+    "question": "What contract must a JavaScript object satisfy to be considered a valid custom Svelte Store?",
+    "options": [
+      "Must inherit from the SvelteStore base class",
+      "Must implement a 'subscribe' method that accepts a callback and returns an 'unsubscribe' function",
+      "Must be an instance of an RxJS Observable",
+      "Must implement a 'dispatch' method taking action objects"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "Svelte stores adhere to a minimal contract: any object with a 'subscribe(run: (value) => void): () => void' function qualifies as a store and can be accessed with the '$' prefix."
+  },
+  {
+    "question": "What feature replaced '<slot />' tags in Svelte 5 for composing component content and passing parameterized templates?",
+    "code": "{#snippet header(title)}\n  <h1>{title}</h1>\n{/snippet}\n\n{@render header('Welcome')}",
+    "options": [
+      "Template components",
+      "JSX fragments",
+      "Snippets and the {@render} tag",
+      "Dynamic viewports"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Svelte 5 introduced Snippets ('{#snippet ...}') and '{@render ...}' to create first-class, typed, reusable UI fragments, superseding legacy slots."
+  },
+  {
+    "question": "What does the 'tick()' lifecycle utility return in Svelte?",
+    "code": "import { tick } from 'svelte';\n\ncount = 1;\nawait tick();\n// DOM is guaranteed updated",
+    "options": [
+      "A boolean indicating whether an error occurred",
+      "The current timestamp in milliseconds",
+      "The total number of active component instances",
+      "A Promise that resolves immediately after any pending state changes have been rendered to the DOM"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "In Svelte, state changes batch and update the DOM asynchronously on the next microtask. 'tick()' returns a promise resolving after the DOM has completely updated."
+  },
+  {
+    "question": "What is the purpose of Svelte 'Actions' attached via the 'use:action' directive?",
+    "code": "<div use:clickOutside={() => alert('Clicked outside!')}></div>",
+    "options": [
+      "Functions called when an element is mounted to the DOM, returning an optional update and destroy lifecycle handler",
+      "Server actions that submit form data without JavaScript",
+      "Redux-style dispatch actions for global state",
+      "Animation keyframe generators"
     ],
     "correct": 0,
     "difficulty": "Intermediate",
-    "explanation": "Svelte is a build-time compiler that generates precise code to update the exact DOM nodes when state changes, eliminating virtual DOM diffing overhead."
+    "explanation": "Actions are element-level lifecycle functions: 'use:myAction' receives the node upon creation and can register listeners, integrate external libraries (like tooltips or charting), and clean up on destroy."
+  },
+  {
+    "question": "How does Svelte scope CSS declared inside a '<style>' tag by default?",
+    "options": [
+      "Places styles in an isolated Shadow DOM root for every element",
+      "Generates a unique hashed class on elements (e.g. svelte-xyz123) and appends it to selectors in that component only",
+      "Appends inline CSS style attributes to every HTML tag",
+      "Compiles CSS to a global stylesheet with no isolation"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "Svelte scopes CSS at compile time by generating a hash based on the component contents, adding that class to template elements and scoping selectors accordingly."
+  },
+  {
+    "question": "How can you apply a style to a descendant element that penetrates Svelte's scoped CSS boundary?",
+    "code": ":global(.child-element) {\n  color: red;\n}",
+    "options": [
+      "Using the '>>>' deep selector operator",
+      "Adding '!important' to every CSS rule",
+      "Using the ':global()' selector modifier",
+      "Adding 'scoped={false}' to the <style> tag"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Wrapping a selector in ':global(...)' prevents Svelte from appending component scoping hashes to it, allowing the rule to match matching elements anywhere."
+  },
+  {
+    "question": "How do you handle asynchronous Promises directly in a Svelte template?",
+    "code": "{#await fetchUserData()}\n  <p>Loading...</p>\n{:then user}\n  <p>Welcome, {user.name}!</p>\n{:catch error}\n  <p>Error: {error.message}</p>\n{/await}",
+    "options": [
+      "Calling '.then()' directly inside curly braces '{promise.then()}'",
+      "Using the '{#async ...} {:resolved ...}' block",
+      "Wrapping the markup in a '<Suspense>' component",
+      "Using the '{#await ...} {:then ...} {:catch ...}' template block"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Svelte's '{#await}' block allows branching declarative rendering based on pending, resolved ('{:then}'), and rejected ('{:catch}') states of a Promise."
+  },
+  {
+    "question": "What special element allows binding event listeners directly to the browser window in Svelte?",
+    "code": "<svelte:window on:keydown={handleKeydown} />",
+    "options": [
+      "<svelte:window>",
+      "<svelte:global>",
+      "<svelte:body>",
+      "<window-listener>"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "'<svelte:window>' enables attaching event listeners (and binding window properties like scrollX, scrollY, innerWidth) to 'window' declaratively without manual addEventListener/removeEventListener cleanup."
+  },
+  {
+    "question": "In SvelteKit, what file defines code that runs strictly on the server to load data for a page route?",
+    "options": [
+      "+page.ts",
+      "+page.server.ts",
+      "+server.ts",
+      "+layout.ts"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'+page.server.ts' exports a 'load' function that executes exclusively on the server, making it safe for database credentials, private API keys, and secure server-only logic."
+  },
+  {
+    "question": "What is the role of Form Actions in SvelteKit ('export const actions = ...')?",
+    "options": [
+      "Animates HTML input elements on focus",
+      "Generates client-side validation schemas with Zod",
+      "Allows handling HTML form POST requests on the server with progressive enhancement when JavaScript is disabled",
+      "Stores form data directly in local IndexedDB"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Form Actions allow server endpoints to receive and handle standard HTML form submissions seamlessly, functioning with standard POST requests even before or without client JS hydration."
+  },
+  {
+    "question": "What is the difference between Svelte's 'setContext' / 'getContext' and Svelte Stores?",
+    "options": [
+      "Stores cannot be accessed inside component script tags",
+      "Context is inherently reactive, while Stores are static",
+      "Context can only store string values",
+      "Context is available only to descendants of the component that set it, whereas Stores can be globally shared across the entire app"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'setContext' and 'getContext' pass data down a specific component hierarchy without prop drilling. Context values are not inherently reactive themselves unless a Store or Rune is passed within the context."
+  },
+  {
+    "question": "How do you bind a DOM element reference to a variable in Svelte?",
+    "code": "let inputEl;\n<input bind:this={inputEl} />",
+    "options": [
+      "bind:this={variable}",
+      "ref={variable}",
+      "bind:ref={variable}",
+      "use:ref={variable}"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "'bind:this={variable}' assigns a direct reference to the rendered DOM element (or component instance) to the specified variable once mounted."
+  },
+  {
+    "question": "What does the 'animate:flip' directive provide in Svelte list transitions?",
+    "code": "import { flip } from 'svelte/animate';\n\n{#each items as item (item.id)}\n  <li animate:flip={{ duration: 300 }}>{item.name}</li>\n{/each}",
+    "options": [
+      "Flips elements 180 degrees horizontally in 3D space",
+      "Smooth FLIP (First, Last, Invert, Play) repositioning animations when list elements are sorted or reordered",
+      "Inverts text color when scrolled into view",
+      "Randomly shuffles array elements"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "The 'animate:flip' directive applies smooth geometric translation animations to reordered list elements using the FLIP animation technique."
+  },
+  {
+    "question": "How do you conditionally toggle a CSS class on an element using Svelte's shorthand syntax?",
+    "code": "<button class:active={isActive}>Click</button>",
+    "options": [
+      "toggle:active={isActive}",
+      "class={isActive ? 'active' : ''} only",
+      "class:active={isActive}",
+      "v-bind:class=\"active: isActive\""
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Svelte provides 'class:name={condition}' directive syntax. Furthermore, if the class name matches the variable name, it can be shortened to 'class:active'."
+  },
+  {
+    "question": "What Rune is used in Svelte 5 to run side effects when state changes after the DOM has been updated?",
+    "code": "$effect(() => {\n  console.log(`The count is now ${count}`);\n});",
+    "options": [
+      "$onUpdate()",
+      "$watch()",
+      "$listen()",
+      "$effect()"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'$effect()' runs after the DOM updates when any reactive state read inside the effect callback changes, replacing Svelte 4's '$: { ... }' side-effect blocks."
   }
 ]

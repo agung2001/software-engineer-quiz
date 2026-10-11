@@ -3,12 +3,12 @@
     "question": "What modern CSS layout feature allows components to style themselves based on their direct parent container's width rather than the viewport?",
     "code": "@container (min-width: 450px) {\n  .card-title { font-size: 1.5rem; }\n}",
     "options": [
-      "CSS Subgrid",
       "Container Queries",
+      "CSS Subgrid",
       "Media Queries Level 5",
       "Flexbox Wrapping"
     ],
-    "correct": 1,
+    "correct": 0,
     "difficulty": "Intermediate",
     "explanation": "CSS Container Queries (@container) allow micro-layouts inside reusable cards to adapt dynamically based on the space allocated by their container."
   },
@@ -23,5 +23,235 @@
     "correct": 1,
     "difficulty": "Intermediate",
     "explanation": "'transform' and 'opacity' are handled directly by the GPU compositor layer without triggering DOM layout or paint recalculations."
+  },
+  {
+    "question": "What does the relational pseudo-class ':has()' enable in modern CSS?",
+    "code": "article:has(img.featured) {\n  grid-column: span 2;\n}",
+    "options": [
+      "Verifies that a DOM element possesses specified data attributes",
+      "Checks whether an element has inline CSS style declarations",
+      "Acts as a parent selector that styles an element based on its descendant or sibling elements",
+      "Conditionally loads stylesheets when specific HTML elements are detected"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "':has()' functions as a parent selector, allowing an element to be selected and styled based on the presence of matching children or subsequent siblings."
+  },
+  {
+    "question": "In the CSS Cascade, how do Cascade Layers defined via '@layer' prioritize specificity?",
+    "code": "@layer reset, base, components, utilities;\n\n@layer base {\n  #main-heading { color: blue; }\n}\n@layer utilities {\n  .red-text { color: red; }\n}",
+    "options": [
+      "Inline styles are superseded by the first defined layer",
+      "Layers are evaluated purely based on selector specificity, ignoring layer order",
+      "Earlier declared layers override later layers unless '!important' is applied",
+      "Layers declared later in the sequence always win over earlier layers, regardless of selector specificity"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "Cascade layers (@layer) establish an explicit hierarchy: normal rules in later layers override normal rules in earlier layers, independent of selector specificity."
+  },
+  {
+    "question": "What is the purpose of CSS Subgrid?",
+    "code": ".parent-grid {\n  display: grid;\n  grid-template-columns: repeat(4, 1fr);\n}\n.child-item {\n  grid-column: span 3;\n  display: grid;\n  grid-template-columns: subgrid;\n}",
+    "options": [
+      "Enables child grid items to align to and inherit their parent grid's tracks and lines",
+      "Generates nested flexbox containers inside each grid cell automatically",
+      "Divides a single grid column into equal responsive fractions",
+      "Simulates masonry layout without requiring JavaScript"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'grid-template-columns: subgrid' lets a nested grid participate in the sizing and alignment of the parent grid tracks instead of maintaining independent columns."
+  },
+  {
+    "question": "What is the calculated specificity of the selector 'nav ul.menu li:first-child a:hover'?",
+    "options": [
+      "(0, 2, 4) - 0 IDs, 2 classes, 4 elements",
+      "(0, 3, 4) - 0 IDs, 3 classes/pseudo-classes, 4 elements",
+      "(1, 2, 3) - 1 ID, 2 classes, 3 elements",
+      "(0, 4, 3) - 0 IDs, 4 classes, 3 elements"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Specificity breakdown: elements are nav, ul, li, a (4); classes/pseudo-classes are .menu, :first-child, :hover (3); IDs are 0. Total: (0, 3, 4)."
+  },
+  {
+    "question": "How does setting 'box-sizing: border-box' affect an element with width: 300px, padding: 20px, and border: 5px solid black?",
+    "options": [
+      "The border is rendered outside the margin box",
+      "The total rendered width becomes 350px (300 + 40 + 10)",
+      "The total rendered width of the element remains exactly 300px",
+      "Padding is automatically clamped to 0"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "In 'border-box', padding and border are included within the specified width and height, keeping the total element box at exactly 300px."
+  },
+  {
+    "question": "What is the fallback value evaluated in the following CSS custom property declaration?",
+    "code": "color: var(--theme-accent, var(--brand-primary, #3b82f6));",
+    "options": [
+      "Inherits 'currentColor' from the body tag",
+      "Transparent if --theme-accent is undefined",
+      "Always #3b82f6 regardless of custom property definitions",
+      "#3b82f6 if both --theme-accent and --brand-primary are undefined"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'var()' accepts a second argument as a fallback, which can be nested. If --theme-accent is not defined, it checks --brand-primary, and if that is also undefined, it uses #3b82f6."
+  },
+  {
+    "question": "Which of the following creates a new stacking context in CSS without setting 'position: relative' and 'z-index'?",
+    "options": [
+      "opacity: 0.95",
+      "color: blue",
+      "font-weight: 700",
+      "margin-top: 20px"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Setting opacity < 1, transform != none, filter != none, or will-change to certain properties creates a new stacking context in the browser compositing tree."
+  },
+  {
+    "question": "What does 'clamp(1rem, 2.5vw, 2.5rem)' compute for font-size?",
+    "code": "font-size: clamp(1rem, 2.5vw, 2.5rem);",
+    "options": [
+      "The average value between 1rem and 2.5rem weighted by 2.5vw",
+      "A fluid size of 2.5vw bounded between a minimum of 1rem and a maximum of 2.5rem",
+      "2.5vw rounded up to the nearest integer multiple of 1rem",
+      "1rem on mobile devices and 2.5rem on desktop viewports exclusively"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'clamp(MIN, VAL, MAX)' clamps an ideal value between an upper and lower bound, equivalent to max(MIN, min(VAL, MAX))."
+  },
+  {
+    "question": "What performance optimization does 'content-visibility: auto' provide for long web pages?",
+    "code": ".article-section {\n  content-visibility: auto;\n  contain-intrinsic-size: auto 500px;\n}",
+    "options": [
+      "Converts HTML text nodes into pre-compiled canvas elements",
+      "Pre-renders all images as WebP thumbnails in the background",
+      "Skips rendering and painting for off-screen elements until they approach the viewport",
+      "Caches the rendered pixels of DOM subtrees in IndexedDB"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "'content-visibility: auto' instructs the browser to skip layout and painting for elements currently outside the viewport, drastically speeding up initial page load."
+  },
+  {
+    "question": "What is the difference between 'display: none' and 'visibility: hidden'?",
+    "options": [
+      "There is no functional or performance difference between the two",
+      "'visibility: hidden' removes the element from the DOM tree permanently",
+      "'display: none' allows screen readers to read the element, while 'visibility: hidden' hides it from screen readers",
+      "'display: none' removes the element from the layout flow entirely, while 'visibility: hidden' preserves its geometric space"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'display: none' causes the element not to be rendered in the layout flow, whereas 'visibility: hidden' makes it invisible while retaining its layout space."
+  },
+  {
+    "question": "What are CSS Logical Properties designed to accommodate?",
+    "code": "margin-inline-start: 1rem;\npadding-block-end: 2rem;",
+    "options": [
+      "International writing modes and text directions (LTR, RTL, vertical-rl) without rewriting physical offsets",
+      "Boolean logic operators inside CSS media query declarations",
+      "Mathematical matrix transformations inside 3D transforms",
+      "Conditional styling based on device battery and network speed"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Logical properties (inline/block) map dimensions to the document's writing mode and text direction instead of physical screen coordinates (top/bottom/left/right)."
+  },
+  {
+    "question": "What CSS property ensures that an image or video maintains a proportional 16:9 ratio regardless of width?",
+    "code": ".video-container {\n  width: 100%;\n  aspect-ratio: 16 / 9;\n}",
+    "options": [
+      "object-fit: ratio(16, 9)",
+      "aspect-ratio: 16 / 9",
+      "box-ratio: 16 : 9",
+      "dimension-lock: 16/9"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "The 'aspect-ratio' property allows an element to define its preferred aspect ratio, eliminating the need for legacy 'padding-top: 56.25%' hacks."
+  },
+  {
+    "question": "What happens when you apply 'pointer-events: none' to a button element?",
+    "code": "button.disabled {\n  pointer-events: none;\n}",
+    "options": [
+      "The button is detached from keyboard tab navigation automatically",
+      "The mouse cursor is hidden whenever it hovers over the button",
+      "The button does not respond to mouse clicks or hover states, and pointer events pass through to elements below",
+      "All CSS transitions and animations on the button are halted"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'pointer-events: none' prevents an element from being the target of mouse or touch events; events pass through to elements underneath in the stacking order."
+  },
+  {
+    "question": "What is the mandatory property required for '::before' and '::after' pseudo-elements to render visually?",
+    "code": ".badge::after {\n  content: '';\n  display: inline-block;\n  width: 8px;\n  height: 8px;\n}",
+    "options": [
+      "z-index",
+      "display",
+      "position",
+      "content"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Pseudo-elements '::before' and '::after' will not be generated or rendered by the browser unless a 'content' property (even an empty string '') is defined."
+  },
+  {
+    "question": "What CSS Color Module 4 function allows you to blend two colors in a specified color space?",
+    "code": "background-color: color-mix(in srgb, #ff0000 70%, #0000ff);",
+    "options": [
+      "color-mix()",
+      "color-blend()",
+      "mix-colors()",
+      "palette-merge()"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'color-mix()' takes two color values and returns the result of mixing them in a specified color space (like srgb, lab, oklab, or lch) by the given percentages."
+  },
+  {
+    "question": "Under what circumstance does vertical margin collapsing occur between adjacent block elements in normal flow?",
+    "code": ".box1 { margin-bottom: 30px; }\n.box2 { margin-top: 20px; }",
+    "options": [
+      "The margins combine additively into 50px",
+      "The margins collapse into a single margin equal to the maximum of the two (30px)",
+      "The lower margin overrides the upper margin regardless of magnitude (20px)",
+      "Margins never collapse between sibling elements"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "In standard block formatting contexts, adjacent vertical margins of sibling blocks collapse into a single margin whose size is the largest of the adjoining margins."
+  },
+  {
+    "question": "Which CSS property specifies how content should be fitted inside an element's box (such as scaling an image while preserving its aspect ratio and clipping overflow)?",
+    "code": "img.avatar {\n  width: 100px;\n  height: 100px;\n  object-fit: cover;\n}",
+    "options": [
+      "image-rendering: crisp-edges",
+      "background-size: cover",
+      "object-fit: cover",
+      "aspect-ratio: fill"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'object-fit: cover' sizes replaced elements (like <img> or <video>) so that the content maintains its aspect ratio while filling the element's entire content box, clipping any overflow."
+  },
+  {
+    "question": "How does the 'will-change' CSS property help optimize complex animations?",
+    "code": ".hero-card {\n  will-change: transform, opacity;\n}",
+    "options": [
+      "Prevents garbage collection pauses during JavaScript animation loops",
+      "Forces synchronous paint updates on the main thread",
+      "Automatically applies a spring physics cubic-bezier timing function",
+      "Informs the browser in advance about properties likely to change so it can optimize resources (e.g., promote to a GPU layer)"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "'will-change' hints to the browser that an element is about to be mutated, allowing it to perform costly optimizations (such as layer creation) ahead of time."
   }
 ]

@@ -3,12 +3,12 @@
     "question": "Which HTML5 semantic element is best suited for content that is self-contained and could be independently syndicated?",
     "code": "<article>\n  <h2>Independent Post</h2>\n  <p>Content...</p>\n</article>",
     "options": [
-      "<section>",
       "<article>",
+      "<section>",
       "<aside>",
       "<main>"
     ],
-    "correct": 1,
+    "correct": 0,
     "difficulty": "Beginner",
     "explanation": "<article> represents an independent, self-contained piece of content (like a blog post, news item, or widget), whereas <section> is for thematic grouping."
   },
@@ -16,13 +16,243 @@
     "question": "What is the purpose of the 'loading=\"lazy\"' attribute on modern HTML5 <img> tags?",
     "code": "<img src=\"hero.webp\" loading=\"lazy\" alt=\"Banner\" />",
     "options": [
-      "Delays image loading until it enters the viewport",
       "Compresses the image using browser WebP encoder",
+      "Delays image loading until it enters the viewport",
       "Forces low-resolution placeholder first",
       "Loads the image via Web Workers"
     ],
-    "correct": 0,
+    "correct": 1,
     "difficulty": "Beginner",
     "explanation": "Native lazy loading defers downloading offscreen images until the user scrolls near them, dramatically improving initial PageSpeed and LCP."
+  },
+  {
+    "question": "What is the key difference between 'defer' and 'async' attributes on an external '<script>' tag?",
+    "code": "<script src=\"a.js\" defer></script>\n<script src=\"b.js\" async></script>",
+    "options": [
+      "'async' guarantees execution order across multiple scripts, while 'defer' does not",
+      "'defer' only downloads when the user interacts with the page, while 'async' downloads on load",
+      "'defer' executes after HTML parsing in document order, while 'async' executes immediately once downloaded, pausing parsing",
+      "'defer' scripts cannot manipulate the DOM"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Both download in parallel without blocking HTML parsing. However, 'defer' executes scripts in document order after the DOM is fully parsed, whereas 'async' executes immediately as soon as the download finishes, interrupting parsing."
+  },
+  {
+    "question": "What unique browser behavior occurs when opening a '<dialog>' element using '.showModal()' instead of '.show()'?",
+    "code": "const modal = document.querySelector('dialog');\nmodal.showModal();",
+    "options": [
+      "Automatically animates using Web Animations API",
+      "Redirects the browser URL to a modal hash route",
+      "Renders inside an isolated iframe sandbox",
+      "Renders on top layer, displays native ::backdrop, and traps keyboard focus within the dialog"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'.showModal()' activates modal behavior: the dialog is placed in the top layer, keyboard focus is trapped, outside content is rendered inert, and the ::backdrop pseudo-element is displayed."
+  },
+  {
+    "question": "How does the '<picture>' element allow browsers to serve optimal next-gen image formats like AVIF with fallbacks?",
+    "code": "<picture>\n  <source srcset=\"photo.avif\" type=\"image/avif\">\n  <source srcset=\"photo.webp\" type=\"image/webp\">\n  <img src=\"photo.jpg\" alt=\"Landscape\">\n</picture>",
+    "options": [
+      "The browser evaluates sources in order and selects the first supported MIME type; if none match, it renders the fallback <img>",
+      "The browser downloads all sources and selects the one with the smallest file size",
+      "The server dynamically recompiles the image based on HTTP headers",
+      "JavaScript polyfills decode the image in an offscreen worker"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "The browser checks <source> tags sequentially from top to bottom, picking the first supported image type. If the browser supports neither AVIF nor WebP, it falls back to the standard <img> tag."
+  },
+  {
+    "question": "What is the difference between 'aria-live=\"polite\"' and 'aria-live=\"assertive\"' for accessibility screen readers?",
+    "code": "<div aria-live=\"polite\" id=\"status-updates\"></div>",
+    "options": [
+      "'assertive' only works for critical system errors like HTTP 500",
+      "'polite' waits until the screen reader finishes speaking before announcing updates; 'assertive' interrupts current speech immediately",
+      "'polite' logs to the browser console, while 'assertive' displays an alert dialog",
+      "'assertive' plays an auditory beep sound before reading text"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'aria-live=\"polite\"' queues the notification until the user is idle, whereas 'aria-live=\"assertive\"' immediately interrupts whatever the assistive technology is currently announcing."
+  },
+  {
+    "question": "What makes the '<template>' element special compared to regular hidden HTML elements like '<div hidden>'?",
+    "code": "<template id=\"card-template\">\n  <div class=\"card\"><h3></h3></div>\n</template>",
+    "options": [
+      "It automatically synchronizes two-way data bindings with Web Components",
+      "It renders only in server-side rendered environments",
+      "Its contents are parsed into a document fragment but remain inert (scripts don't execute, images don't download) until instantiated",
+      "It requires a special Shadow DOM compiler to be read by JavaScript"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Content inside <template> is inert: scripts don't run, media doesn't load, and styles don't apply until JavaScript clones the template's content with 'document.importNode()' or '.cloneNode(true)'."
+  },
+  {
+    "question": "What is the primary function of '<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">'?",
+    "options": [
+      "Scales images automatically using CSS object-fit rules",
+      "Restricts screen orientation to portrait mode only",
+      "Disables pinch-to-zoom accessibility features across the browser",
+      "Sets the layout viewport width to the device's screen width and sets initial zoom level, preventing desktop 980px zoom-out scaling"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Without the viewport meta tag, mobile browsers assume a desktop page width (typically 980px) and scale it down. This tag tells the browser to match the viewport width to the device's physical screen."
+  },
+  {
+    "question": "Why is 'rel=\"noopener noreferrer\"' recommended when opening links in a new tab via 'target=\"_blank\"'?",
+    "code": "<a href=\"https://external.com\" target=\"_blank\" rel=\"noopener noreferrer\">Link</a>",
+    "options": [
+      "Prevents the newly opened tab from accessing the opening page's 'window.opener' object and leaking referrer headers",
+      "Encrypts the outbound HTTP request using TLS 1.3",
+      "Prevents external trackers from setting third-party cookies",
+      "Ensures the target tab opens in Incognito mode"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Without 'noopener', the target page can execute 'window.opener.location = maliciousSite', hijacking the user's original tab (tabnabbing). 'noreferrer' additionally suppresses the Referer header."
+  },
+  {
+    "question": "What native HTML5 element pairs with an '<input>' element to provide autocomplete suggestions while still allowing custom text input?",
+    "code": "<input list=\"browsers\">\n<datalist id=\"browsers\">\n  <option value=\"Chrome\">\n  <option value=\"Firefox\">\n</datalist>",
+    "options": [
+      "<select>",
+      "<datalist>",
+      "<optgroup>",
+      "<autocomplete>"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "<datalist> defines a list of pre-defined options for an <input> element. Unlike <select>, the user can either select from the suggestions or type a completely custom value."
+  },
+  {
+    "question": "What is the fundamental architectural difference between '<canvas>' and '<svg>'?",
+    "options": [
+      "'<canvas>' retains interactive DOM event listeners for individual shapes",
+      "'<svg>' requires WebGL GPU hardware acceleration, while '<canvas>' does not",
+      "'<canvas>' provides a procedural bitmap pixel grid manipulated by JavaScript, while '<svg>' is an XML-based vector DOM tree accessible via CSS",
+      "'<svg>' cannot be scaled without pixelation"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "<canvas> is an immediate-mode pixel buffer (ideal for high-performance games/animations with no DOM nodes for shapes), whereas <svg> is retained-mode vector markup where each shape is an actual DOM element."
+  },
+  {
+    "question": "Which native HTML elements create a collapsible disclosure accordion without requiring any JavaScript?",
+    "code": "<details>\n  <summary>Click to view FAQ</summary>\n  <p>Here is the detailed answer...</p>\n</details>",
+    "options": [
+      "<dialog> and <caption-content>",
+      "<accordion> and <collapse>",
+      "<section> and <toggle>",
+      "<details> and <summary>"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "<details> and <summary> provide native browser disclosure widgets that toggle open and closed without any CSS or JavaScript."
+  },
+  {
+    "question": "What is the semantic difference between '<strong>' / '<em>' versus '<b>' / '<i>'?",
+    "options": [
+      "'<strong>' and '<em>' convey semantic importance and verbal stress emphasis to assistive tech; '<b>' and '<i>' are purely stylistic visual styling",
+      "'<b>' and '<i>' are deprecated and removed in HTML5",
+      "'<strong>' increases font-size while '<b>' only increases font-weight",
+      "'<em>' applies to screen readers only and renders normal font visually"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "<b> and <i> style text bold or italic purely visually. In contrast, <strong> indicates strong importance/urgency, and <em> denotes stressed phonetic emphasis, which screen readers announce differently."
+  },
+  {
+    "question": "What does the 'sandbox' attribute on an '<iframe>' enforce by default when no flags are passed?",
+    "code": "<iframe src=\"untrusted.html\" sandbox></iframe>",
+    "options": [
+      "Restricts the iframe to 30 FPS rendering",
+      "Applies maximum restrictions: disables scripts, forms, popups, and treats content as from a unique origin",
+      "Blocks HTTP requests while allowing HTTPS requests",
+      "Converts all inner links to target=\"_self\""
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "An empty 'sandbox' attribute places the framed document into a heavily restricted environment: JavaScript is disabled, forms cannot be submitted, popups are blocked, and it runs in an isolated origin."
+  },
+  {
+    "question": "What is the recommended semantic role of the '<aside>' element?",
+    "options": [
+      "Legal disclaimers in the page footer",
+      "The primary navigation bar of the application",
+      "Content tangentially related to the main content (e.g., sidebars, callout boxes, footnotes, related links)",
+      "The main header banner of the article"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "<aside> represents a portion of a document whose content is only tangentially related to the content around it, often represented as sidebars or callout boxes."
+  },
+  {
+    "question": "What is the impact of specifying 'inputmode=\"numeric\"' on a text input?",
+    "code": "<input type=\"text\" inputmode=\"numeric\" pattern=\"[0-9]*\">",
+    "options": [
+      "Converts floating point numbers to integers automatically",
+      "Prevents users from typing non-numeric characters using hardware keyboards",
+      "Parses the input value as a BigInt in form submission payloads",
+      "Displays an optimized numeric on-screen virtual keyboard on mobile devices without changing the input type value semantics"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'inputmode' hints to virtual keyboards (smartphones/tablets) which keyboard layout to present (e.g., numeric keypad, email keypad) without forcing the strict validation constraints of type=\"number\"."
+  },
+  {
+    "question": "Which Open Graph '<meta>' tag defines the featured thumbnail image used when a webpage link is shared on platforms like Slack, X, or LinkedIn?",
+    "code": "<meta property=\"og:image\" content=\"https://example.com/banner.png\">",
+    "options": [
+      "og:image",
+      "twitter:thumbnail",
+      "og:preview",
+      "meta:banner"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "'og:image' is the standard Open Graph protocol property specifying the image URL displayed in rich social media unfurl previews."
+  },
+  {
+    "question": "What value should the 'autocomplete' attribute on an OTP (One-Time Password) SMS input have according to modern Web standards?",
+    "code": "<input type=\"text\" autocomplete=\"one-time-code\">",
+    "options": [
+      "otp",
+      "one-time-code",
+      "sms-code",
+      "verify-token"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'autocomplete=\"one-time-code\"' allows modern mobile operating systems (iOS and Android) to automatically offer SMS-received verification codes directly into the input field."
+  },
+  {
+    "question": "How do you define a fallback mechanism when audio or video cannot be played by the user's browser?",
+    "code": "<video controls>\n  <source src=\"movie.mp4\" type=\"video/mp4\">\n  Your browser does not support the video tag.\n</video>",
+    "options": [
+      "Adding a 'fallback' attribute on the <source> tag",
+      "Using the 'alt' attribute on the video tag",
+      "Placing plain text or HTML fallback links inside the <video> container element",
+      "Defining a CSS ':empty' rule"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "Any content placed between opening <video> and closing </video> tags (after <source> tags) will only be displayed by browsers that do not support the video element."
+  },
+  {
+    "question": "What does setting the 'novalidate' attribute on an HTML '<form>' tag achieve?",
+    "code": "<form action=\"/submit\" method=\"POST\" novalidate>",
+    "options": [
+      "Prevents password inputs from being saved by browser password managers",
+      "Disables CSRF token verification on the receiving server",
+      "Suppresses HTTP POST header verification",
+      "Bypasses native browser constraint validation popups on submit, allowing custom JavaScript validation logic to run"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'novalidate' disables default browser form constraint validation (like built-in tooltip popups for 'required' or 'type=\"email\"'), allowing developers to use custom UI validation libraries."
   }
 ]

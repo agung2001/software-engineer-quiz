@@ -10,5 +10,246 @@
     "correct": 0,
     "difficulty": "Intermediate",
     "explanation": "libuv is the cross-platform C library that handles Node.js's event loop, thread pool, async I/O, file system operations, and network sockets."
+  },
+  {
+    "question": "What is the key timing difference between 'process.nextTick()' and 'setImmediate()' in the Node.js event loop?",
+    "options": [
+      "'setImmediate()' runs before any microtasks are resolved",
+      "'process.nextTick()' runs immediately after the current operation finishes before the event loop advances; 'setImmediate()' runs in the check phase of the loop",
+      "'process.nextTick()' runs only once every 10 milliseconds",
+      "There is no difference; they are aliases for each other"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'process.nextTick()' callbacks are resolved immediately after the current operation completes, before returning to the event loop. 'setImmediate()' queues callbacks in the event loop's Check phase."
+  },
+  {
+    "question": "What is 'backpressure' in Node.js Streams, and how is it properly managed?",
+    "options": [
+      "When the libuv thread pool runs out of worker threads for DNS lookups",
+      "When CPU utilization hits 100%, causing the garbage collector to throttle network sockets",
+      "When a fast Readable stream overwhelms a slow Writable stream; handled by pausing reads when writable.write() returns false until the 'drain' event fires",
+      "A condition where HTTP requests overflow the TCP socket queue"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "Backpressure occurs when data arrives faster than a consumer can process it. The Writable's 'write()' returns false when its buffer is full, signaling the producer to pause until the 'drain' event fires. 'stream.pipeline()' handles this automatically."
+  },
+  {
+    "question": "What is the architectural difference between Node.js 'cluster' module and 'worker_threads'?",
+    "options": [
+      "'worker_threads' runs processes across separate physical machines",
+      "'worker_threads' cannot execute JavaScript code",
+      "'cluster' is only supported on Linux operating systems",
+      "'cluster' forks multiple child processes with independent V8 instances; 'worker_threads' runs multiple threads sharing one process with SharedArrayBuffer support"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "The 'cluster' module forks separate Node.js processes that share server ports. 'worker_threads' creates threads within the same process that can share memory via ArrayBuffers, ideal for CPU-heavy tasks."
+  },
+  {
+    "question": "Why is 'Buffer.allocUnsafe(size)' significantly faster than 'Buffer.alloc(size)'?",
+    "code": "const buf = Buffer.allocUnsafe(1024);",
+    "options": [
+      "It allocates memory without zero-initializing (clearing) it, though it may contain sensitive old memory data",
+      "It bypasses operating system memory page table limits",
+      "It writes memory directly to the GPU video buffer",
+      "It uses compressed memory pages via gzip"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'Buffer.allocUnsafe()' does not initialize allocated memory to zero. This makes it faster, but the buffer may contain residual data from prior processes, risking information disclosure if exposed uninitialized."
+  },
+  {
+    "question": "What happens when an EventEmitter exceeds the default 'maxListeners' threshold (10)?",
+    "code": "const emitter = new EventEmitter();\nfor(let i = 0; i < 15; i++) emitter.on('event', () => {});",
+    "options": [
+      "The process throws a fatal MaxListenersExceededException and crashes",
+      "Node.js prints a memory leak warning to stderr but continues executing normally",
+      "Listeners after the 10th are silently ignored",
+      "The oldest listener is automatically deregistered"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "Node.js emits a console warning (MaxListenersExceededWarning) to help identify potential memory leaks, but it does not throw an error and all registered listeners still execute."
+  },
+  {
+    "question": "What is the recommended response when an 'uncaughtException' occurs in a production Node.js process?",
+    "code": "process.on('uncaughtException', (err) => {\n  console.error(err);\n  // What should follow?\n});",
+    "options": [
+      "Clear the event loop and restart the current request",
+      "Resume normal execution and ignore the exception",
+      "Log the error, gracefully release open resources, and terminate the process with exit code 1",
+      "Wrap the process in a while(true) try-catch loop"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "An unhandled exception leaves the application in an indeterminate, corrupted state. Best practice is to log the error, close active connections/resources, exit with a non-zero code, and let a process supervisor (PM2, systemd, Docker/K8s) restart it."
+  },
+  {
+    "question": "In 'node:child_process', which method is best for spawning a long-running process with streaming data output?",
+    "options": [
+      "fork()",
+      "exec()",
+      "execFile()",
+      "spawn()"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'spawn()' returns streams for stdout/stderr, allowing massive amounts of data to be handled efficiently in chunks without buffering the entire output in memory, unlike 'exec()'."
+  },
+  {
+    "question": "What is the default size of the libuv thread pool used for asynchronous filesystem, DNS, and crypto operations?",
+    "options": [
+      "4 threads (configurable via UV_THREADPOOL_SIZE)",
+      "1 thread per CPU core",
+      "16 fixed threads",
+      "Unlimited dynamic threads"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "By default, libuv provides a thread pool of 4 worker threads to handle tasks that lack asynchronous OS system calls (like fs, crypto.pbkdf2, dns.lookup). This can be tuned via 'UV_THREADPOOL_SIZE'."
+  },
+  {
+    "question": "What is the difference between 'path.resolve()' and 'path.join()' in the Node.js 'path' module?",
+    "code": "path.resolve('/a', 'b', '/c');\npath.join('/a', 'b', '/c');",
+    "options": [
+      "'path.join()' throws an error on absolute path arguments",
+      "'path.resolve()' processes paths right-to-left until constructing an absolute path; 'path.join()' simply concatenates segments with the platform separator",
+      "'path.resolve()' checks if the file exists on the filesystem",
+      "There is no difference on POSIX operating systems"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'path.resolve()' acts like navigating via the terminal with 'cd': seeing a root path like '/c' resets the resolution to root '/c'. 'path.join()' simply concatenates segments ('/a/b/c') and normalizes separators."
+  },
+  {
+    "question": "What Node.js API allows tracking request-scoped context (such as correlation IDs or user auth) across asynchronous execution boundaries without passing parameters manually?",
+    "code": "import { AsyncLocalStorage } from 'node:async_hooks';\nconst asyncLocalStorage = new AsyncLocalStorage();",
+    "options": [
+      "Zone.js",
+      "AsyncContextTracker",
+      "AsyncLocalStorage",
+      "ThreadLocalStorage"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "'AsyncLocalStorage' (from 'node:async_hooks') stores state across asynchronous call chains, providing thread-local-storage-like capability for Node.js event-driven workflows."
+  },
+  {
+    "question": "What Node.js 20+ built-in CLI flag natively loads environment variables from a .env file without requiring external packages like dotenv?",
+    "code": "node --env-file=.env app.js",
+    "options": [
+      "--config-env",
+      "--dotenv",
+      "--load-env",
+      "--env-file"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Node.js 20.6.0+ introduced the native '--env-file=.env' command-line flag, loading variables directly into 'process.env' without third-party dependencies."
+  },
+  {
+    "question": "Why should 'crypto.timingSafeEqual()' be used instead of '===' when comparing HMAC signatures or authentication tokens?",
+    "code": "crypto.timingSafeEqual(Buffer.from(sigA), Buffer.from(sigB));",
+    "options": [
+      "Prevents timing attacks where an attacker deduces secrets based on early-return comparison latency",
+      "Generates an audit hash in the operating system keychain",
+      "Bypasses JavaScript string coercion bugs",
+      "Runs comparison in constant time on GPU threads"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "Standard string comparison ('===') exits as soon as the first mismatching character is found. An attacker can measure microscopic differences in response times (timing attack) to deduce valid tokens. 'timingSafeEqual' takes constant time."
+  },
+  {
+    "question": "In 'process.memoryUsage()', what does 'rss' (Resident Set Size) measure?",
+    "code": "console.log(process.memoryUsage().rss);",
+    "options": [
+      "Only the memory currently used by JavaScript objects in the V8 heap",
+      "The total memory allocated for the process in RAM, including code segments, heap, stack, and C++ bindings",
+      "The virtual address space allocated on the swap partition",
+      "The size of cached Node.js modules in require.cache"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "'rss' (Resident Set Size) is the portion of physical RAM occupied by the entire process, including the V8 heap, C++ libraries, Buffers, and executable code."
+  },
+  {
+    "question": "What happens when two CommonJS modules have a circular dependency in Node.js?",
+    "code": "// a.js requires b.js, and b.js requires a.js",
+    "options": [
+      "A fatal CircularDependencyError is thrown at require() time",
+      "Node.js enters an infinite loop until stack overflow",
+      "The module requiring the circular dependency receives an incomplete, partially evaluated 'module.exports' object",
+      "One module is silently omitted from the require cache"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "To prevent infinite loops, Node.js returns the partially evaluated 'module.exports' object of the circular module as it existed at the time of the require() call."
+  },
+  {
+    "question": "How do you abort a pending asynchronous HTTP request or file system operation in modern Node.js?",
+    "code": "const ac = new AbortController();\nfetch('https://api.example.com', { signal: ac.signal });\nac.abort();",
+    "options": [
+      "Calling client.destroy()",
+      "Calling process.kill(process.pid, 'SIGSTOP')",
+      "Rejecting the request promise manually",
+      "Using an AbortController and passing its signal"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Modern Node.js adopts the standard web API 'AbortController'. Passing '{ signal: ac.signal }' to fetch, fs operations, or child processes allows clean task cancellation."
+  },
+  {
+    "question": "In the Node.js event loop, during which phase do callbacks scheduled by 'setImmediate()' execute?",
+    "options": [
+      "Check phase",
+      "Poll phase",
+      "Timers phase",
+      "Close callbacks phase"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "The event loop has six main phases: timers -> pending callbacks -> idle/prepare -> poll -> check (setImmediate) -> close callbacks. 'setImmediate()' runs in the check phase."
+  },
+  {
+    "question": "Why is 'stream.pipeline()' preferred over '.pipe()' when connecting multiple streams?",
+    "code": "import { pipeline } from 'node:stream/promises';\nawait pipeline(readStream, transformStream, writeStream);",
+    "options": [
+      "Executes the transformation inside a separate worker thread",
+      "Properly handles errors and ensures all streams are destroyed on failure to prevent memory and file descriptor leaks",
+      "Increases stream buffer size from 64KB to 1MB",
+      "Automatically encodes data in gzip format"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "With '.pipe()', an error in an intermediary stream doesn't automatically close downstream streams, causing file descriptor leaks. 'pipeline()' properly tears down and cleans up all streams if any stream fails."
+  },
+  {
+    "question": "What is the purpose of the 'exports' field in 'package.json' over the legacy 'main' field?",
+    "code": "{\n  \"exports\": {\n    \"import\": \"./index.mjs\",\n    \"require\": \"./index.cjs\"\n  }\n}",
+    "options": [
+      "Enforces license compliance checks on installation",
+      "Prevents the package from being installed globally via npm",
+      "Enables conditional package exports based on environment (ESM vs CJS, types, browser) and encapsulates internal files",
+      "Defines which GitHub branches are allowed to publish"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "The 'exports' field supports conditional exports (serving ESM to 'import' and CommonJS to 'require') and subpath exports, restricting consumers from importing internal private files not explicitly exposed."
+  },
+  {
+    "question": "Which Node.js core module provides direct access to V8 engine heap inspection and snapshots?",
+    "code": "import v8 from 'node:v8';\nconst snapshot = v8.getHeapSnapshot();",
+    "options": [
+      "node:inspector",
+      "node:vm",
+      "node:perf_hooks",
+      "node:v8"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "The 'node:v8' module exposes APIs specific to the version of V8 built into the Node.js binary, including 'getHeapStatistics()', 'getHeapSnapshot()', and serializer utilities."
   }
 ]

@@ -1,15 +1,255 @@
 [
   {
-    "question": "What TypeScript utility type constructs a type with all properties of T set to optional?",
-    "code": "interface User { id: string; email: string; }\ntype DraftUser = Partial<User>;",
+    "question": "What is the key difference between the 'unknown' and 'any' types in TypeScript?",
     "options": [
-      "Required<T>",
+      "'unknown' requires type checking or narrowing before performing operations on it, whereas 'any' disables all type checking",
+      "'unknown' can only hold primitive numbers and strings",
+      "'any' requires explicit casting before calling methods",
+      "They are identical aliases"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'unknown' is the type-safe counterpart of 'any'. Anything can be assigned to 'unknown', but TypeScript forbids reading properties or calling methods on it without prior narrowing (e.g. via typeof or instanceof)."
+  },
+  {
+    "question": "How does the 'never' type facilitate exhaustive type checking in a switch statement?",
+    "code": "type Shape = Circle | Square;\n\nfunction getArea(shape: Shape) {\n  switch (shape.kind) {\n    case 'circle': return Math.PI * shape.radius ** 2;\n    case 'square': return shape.size ** 2;\n    default:\n      const _exhaustiveCheck: never = shape;\n      throw new Error(`Unhandled shape: ${_exhaustiveCheck}`);\n  }\n}",
+    "options": [
+      "Terminates the program runtime immediately",
+      "If a new variant is added to the Shape union and unhandled in the switch, TypeScript produces a compile-time type error",
+      "Generates an automated unit test for missing cases",
+      "Automatically executes all remaining cases"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Because 'never' cannot be assigned any value, assigning an unhandled union member to a 'never' variable triggers a compile error if any union member is not handled in the switch."
+  },
+  {
+    "question": "What does the 'infer' keyword do inside a conditional type?",
+    "code": "type UnpackPromise<T> = T extends Promise<infer U> ? U : T;",
+    "options": [
+      "Imports an external type declaration from node_modules",
+      "Forces TypeScript to guess the runtime type using heuristics",
+      "Introduces a type variable within a condition to be deduced/extracted from the matched type",
+      "Casts the returned type to any"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "Inside the 'extends' clause of a conditional type, 'infer U' declares a type variable to be extracted from the structure being examined (like unwrapping Promise resolution types or function returns)."
+  },
+  {
+    "question": "What problem does the 'satisfies' operator (TypeScript 4.9+) solve compared to type annotation?",
+    "code": "type Colors = 'red' | 'green' | 'blue';\ntype RGB = [number, number, number];\n\nconst palette = {\n  red: [255, 0, 0],\n  green: '#00ff00',\n} satisfies Record<Colors, string | RGB>;\n\npalette.green.toUpperCase(); // Valid with satisfies, would fail with annotation!",
+    "options": [
+      "Makes all properties of an object immutable",
+      "Forces asynchronous validation of object properties at runtime",
+      "Converts TypeScript interfaces into JSON schemas",
+      "Validates that a value matches a type definition without widening the variable's inferred literal type"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "Type annotations widen types to the declared type (making palette.green 'string | RGB', preventing .toUpperCase()). 'satisfies' ensures conformance while preserving the specific inferred type."
+  },
+  {
+    "question": "What does appending 'as const' (a const assertion) do to an array or object literal?",
+    "code": "const routes = ['home', 'about', 'contact'] as const;",
+    "options": [
+      "Makes all properties 'readonly' and narrows literal types instead of widening to string or number",
+      "Converts the JavaScript array into an Immutable.js List",
+      "Prevents the variable from being reassigned in JavaScript",
+      "Exports the variable as a global constant"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "'as const' narrows types to their exact literal values (e.g., 'home' instead of string) and marks array/object members recursively as 'readonly', producing a tuple of literal types."
+  },
+  {
+    "question": "What is a User-Defined Type Guard in TypeScript?",
+    "code": "function isFish(pet: Fish | Bird): pet is Fish {\n  return (pet as Fish).swim !== undefined;\n}",
+    "options": [
+      "A runtime middleware that sanitizes user input",
+      "A function whose return type is a type predicate 'parameter is Type', allowing TypeScript to narrow the type in conditional blocks",
+      "A custom error class thrown when type validation fails",
+      "A decorator that restricts access to class methods"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "A user-defined type guard returns a boolean with a return type of 'arg is Type'. When it returns true, TypeScript automatically narrows the argument's type inside following 'if' branches."
+  },
+  {
+    "question": "What is the primary difference between TypeScript Interfaces and Type Aliases regarding declaration merging?",
+    "options": [
+      "Type aliases can only be used with primitive types",
+      "Interfaces cannot be used to type object shapes",
+      "Multiple interface declarations with the same name automatically merge into one; type aliases with duplicate names cause a compile error",
+      "Interfaces are evaluated at runtime while type aliases are stripped"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Interfaces support declaration merging (declaring 'interface User' twice merges properties into a single interface definition). Type aliases cannot be re-opened or merged."
+  },
+  {
+    "question": "What utility type creates a new type by choosing a specific subset of properties 'K' from type 'T'?",
+    "code": "type UserPreview = Pick<User, 'id' | 'name'>;",
+    "options": [
+      "Select<T, K>",
       "Omit<T, K>",
-      "Partial<T>",
-      "Readonly<T>"
+      "Extract<T, U>",
+      "Pick<T, K>"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'Pick<T, K>' constructs a type by picking the set of properties K (string literal or union of literals) from type T. In contrast, 'Omit<T, K>' removes them."
+  },
+  {
+    "question": "How do Template Literal Types function in TypeScript?",
+    "code": "type Event = `${'user' | 'order'}_${'created' | 'deleted'}`;",
+    "options": [
+      "Generate union types by expanding cross-product string combinations: 'user_created' | 'user_deleted' | 'order_created' | 'order_deleted'",
+      "Interpolate runtime JavaScript variables into type definitions",
+      "Format strings using HTML template elements",
+      "Compile strings into regular expressions"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Template literal types build on string literal types and have the same syntax as JS template strings, generating cross-product unions of every string permutation at compile time."
+  },
+  {
+    "question": "What type system philosophy does TypeScript adhere to when comparing compatibility between types?",
+    "options": [
+      "Nominal typing: types are only compatible if they share the exact same explicit class or interface declaration",
+      "Structural typing (Duck typing): types are compatible if their members and shapes match, regardless of explicit names",
+      "Dependent typing: types depend on dynamic runtime runtime constraints",
+      "Linear typing: variables can only be used once before invalidation"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "TypeScript is structurally typed. If two objects have identical shapes and property types, TypeScript considers them compatible, even if they were declared via different interfaces or classes."
+  },
+  {
+    "question": "What technique is used in TypeScript to simulate Nominal Typing (e.g. differentiating between UserId and OrderId strings)?",
+    "code": "type UserId = string & { readonly __brand: unique symbol };\ntype OrderId = string & { readonly __brand: unique symbol };",
+    "options": [
+      "Using the 'nominal' compiler keyword",
+      "Declaring the types inside separate namespaces",
+      "Branded Types (or Flavored Types) using a unique phantom property",
+      "Creating private classes extending String"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "Branded types intersect a primitive with an uninstantiated unique symbol property ('{ readonly __brand: unique symbol }'). This prevents accidental interchange of identically-typed primitives."
+  },
+  {
+    "question": "What does the non-null assertion operator ('!') do in TypeScript?",
+    "code": "const root = document.getElementById('root')!;",
+    "options": [
+      "Generates an automatic optional chaining check",
+      "Negates the boolean value of the expression",
+      "Throws a NullPointerException at runtime if the value is null",
+      "Asserts to the compiler that an expression is neither null nor undefined, removing those types from the narrowed type"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "The post-fix '!' operator asserts to the TypeScript type checker that the value cannot be 'null' or 'undefined' at that point in the code. It emits no runtime check."
+  },
+  {
+    "question": "What happens when a conditional type is applied to a generic union type ('Distributive Conditional Types')?",
+    "code": "type ToArray<T> = T extends any ? T[] : never;\ntype StrOrNumArray = ToArray<string | number>;",
+    "options": [
+      "The condition distributes over each member of the union: string[] | number[]",
+      "The union is treated as a whole: (string | number)[]",
+      "TypeScript raises a compile error on unions in conditional types",
+      "The type resolves to never"
+    ],
+    "correct": 0,
+    "difficulty": "Advanced",
+    "explanation": "When a conditional type acts on a naked generic type parameter, it distributes over unions. 'ToArray<string | number>' distributes into 'ToArray<string> | ToArray<number>', resolving to 'string[] | number[]'."
+  },
+  {
+    "question": "What does setting 'noImplicitAny: true' in 'tsconfig.json' enforce?",
+    "options": [
+      "Removes the 'any' keyword completely from the TypeScript language",
+      "Raises an error on any variable or parameter whose type defaults to 'any' without an explicit type annotation",
+      "Disables all type inference throughout the codebase",
+      "Replaces all 'any' types with 'unknown' automatically at runtime"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'noImplicitAny' causes the compiler to throw an error whenever an expression or parameter cannot have its type inferred and would otherwise silently fallback to 'any'."
+  },
+  {
+    "question": "What is the purpose of ambient declaration files ('.d.ts') in TypeScript?",
+    "options": [
+      "Define HTML template structures for server-side rendering",
+      "Compile directly into browser WebAssembly modules",
+      "Provide type definitions for JavaScript libraries without containing any executable runtime JavaScript code",
+      "Store encrypted environment variables"
     ],
     "correct": 2,
     "difficulty": "Beginner",
-    "explanation": "Partial<T> returns a type where every key in T is marked as optional (?:)."
+    "explanation": "'.d.ts' files contain only type declarations (ambient types, interfaces, functions with no bodies). They describe the shape of existing JavaScript code to the compiler and contain no runtime JS."
+  },
+  {
+    "question": "How do you enforce that a generic type parameter extends a specific object shape?",
+    "code": "function getProperty<T, K extends keyof T>(obj: T, key: K) {\n  return obj[key];\n}",
+    "options": [
+      "Declaring the generic as 'restricted<T>'",
+      "Using the 'implements' keyword in the generic signature",
+      "Adding a type guard in the function body only",
+      "Using generic constraints with the 'extends' keyword (<T extends Shape>)"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "Generic constraints (e.g. '<T extends Shape>') ensure that any type argument provided to the function or class must satisfy the specified shape or type contract."
+  },
+  {
+    "question": "What does the 'Extract<T, U>' utility type do?",
+    "code": "type T0 = Extract<'a' | 'b' | 'c', 'a' | 'f'>; // 'a'",
+    "options": [
+      "Constructs a type by extracting from union T all union members that are assignable to U",
+      "Extracts all properties from object T into a tuple",
+      "Removes properties assignable to U from T",
+      "Unwraps array elements into a union"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "'Extract<T, U>' filters union T, keeping only members that are assignable to U. 'Exclude<T, U>' does the inverse by removing members assignable to U."
+  },
+  {
+    "question": "How do function overloads work in TypeScript?",
+    "code": "function makeDate(timestamp: number): Date;\nfunction makeDate(m: number, d: number, y: number): Date;\nfunction makeDate(mOrTimestamp: number, d?: number, y?: number): Date {\n  // Implementation\n}",
+    "options": [
+      "TypeScript compiles each overload into a uniquely named JavaScript function",
+      "Multiple overload signatures describe call variants, followed by a single general implementation signature compatible with all overloads",
+      "Overloads execute on separate background threads based on parameter types",
+      "Overload signatures must each have their own separate function body"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "In TypeScript, function overloads consist of one or more overload signatures followed by the implementation signature. The implementation signature is not callable directly; only the overloads define public API access."
+  },
+  {
+    "question": "What does setting 'skipLibCheck: true' in 'tsconfig.json' do?",
+    "options": [
+      "Disables npm package dependency auditing",
+      "Skips bundling third-party libraries in production",
+      "Skips type checking of all declaration files (.d.ts), drastically reducing compilation and IDE analysis time",
+      "Ignores syntax errors in project source files"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'skipLibCheck' instructs TypeScript to skip full type checking of all '.d.ts' files (including node_modules and built-in lib.d.ts), significantly boosting compilation speed."
+  },
+  {
+    "question": "What is the difference between 'Record<string, number>' and an index signature '{ [key: string]: number }'?",
+    "options": [
+      "Record runs in runtime JavaScript, while index signatures do not",
+      "Record creates an immutable array, while index signatures create objects",
+      "Index signatures only work with numeric keys",
+      "They are functionally equivalent for mapping arbitrary string keys to numbers, but Record can also map union literal keys ('Record<\"a\" | \"b\", number>')"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "While both declare an object mapping keys to values, 'Record<K, T>' accepts union literals for K (e.g. 'Record<\"x\" | \"y\", number>'), which index signatures do not permit."
   }
 ]

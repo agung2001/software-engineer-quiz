@@ -11,5 +11,243 @@
     "correct": 0,
     "difficulty": "Beginner",
     "explanation": "$match filters documents so that only matching items proceed to the next pipeline stage, efficiently utilizing indexes if placed early."
+  },
+  {
+    "question": "In a compound index '{ status: 1, createdAt: -1 }', which query CANNOT take advantage of this index?",
+    "options": [
+      "db.orders.find({ status: 'active', createdAt: { $gt: ISODate('2024-01-01') } })",
+      "db.orders.find({ createdAt: { $gt: ISODate('2024-01-01') } })",
+      "db.orders.find({ status: 'active' })",
+      "db.orders.find({ status: 'pending' }).sort({ createdAt: -1 })"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Compound indexes follow the prefix rule. Queries must filter on the leading index field ('status') to utilize the index. A query filtering only on 'createdAt' cannot use this index."
+  },
+  {
+    "question": "How do you configure a Time-To-Live (TTL) index in MongoDB to automatically delete documents 24 hours after their 'createdAt' date?",
+    "code": "db.sessions.createIndex(\n  { createdAt: 1 },\n  { expireAfterSeconds: 86400 }\n)",
+    "options": [
+      "{ autoPurge: '24h' } in collection options",
+      "{ ttl: 86400 } on a compound index",
+      "{ expireAfterSeconds: 86400 } on a single-field date index",
+      "{ deleteAfter: 86400 } on a capped collection"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "TTL indexes are single-field indexes on date fields configured with 'expireAfterSeconds'. A background thread runs every 60 seconds to delete expired documents."
+  },
+  {
+    "question": "In MongoDB sharding architecture, what component routes client queries to the appropriate shard nodes?",
+    "options": [
+      "shard coordinator agent",
+      "mongod",
+      "config server replica set",
+      "mongos"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'mongos' acts as the query router. Applications connect to mongos instances, which consult the config servers for metadata and route queries to the correct shards."
+  },
+  {
+    "question": "What is the maximum BSON document size supported by MongoDB?",
+    "options": [
+      "16 Megabytes",
+      "4 Megabytes",
+      "64 Megabytes",
+      "128 Megabytes"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "MongoDB enforces a strict 16 MB limit per BSON document to ensure RAM and network efficiency. Larger binary payloads (like videos or large PDFs) should be stored in GridFS."
+  },
+  {
+    "question": "What array update operator adds an element to an array only if the value does not already exist?",
+    "code": "db.users.updateOne(\n  { _id: 1 },\n  { $addToSet: { tags: 'developer' } }\n)",
+    "options": [
+      "$push",
+      "$addToSet",
+      "$insertUnique",
+      "$append"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'$addToSet' appends a value to an array only if the value is not already present, treating the array like a mathematical set. In contrast, '$push' allows duplicates."
+  },
+  {
+    "question": "What aggregation pipeline stage performs an equality or pipeline-based left outer join with another collection?",
+    "code": "db.orders.aggregate([\n  {\n    $lookup: {\n      from: 'customers',\n      localField: 'customerId',\n      foreignField: '_id',\n      as: 'customerDetails'\n    }\n  }\n])",
+    "options": [
+      "$merge",
+      "$join",
+      "$lookup",
+      "$populate"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'$lookup' performs a left outer join to an unsharded collection in the same database to filter and incorporate fields from joined documents."
+  },
+  {
+    "question": "What is the anatomy of a standard 12-byte BSON ObjectId?",
+    "options": [
+      "6-byte MAC address and 6-byte auto-increment integer",
+      "12 bytes of completely random cryptographically secure bits",
+      "8-byte epoch timestamp and 4-byte CRC32 checksum",
+      "4-byte Unix timestamp, 5-byte random value unique to machine/process, and 3-byte incrementing counter"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "ObjectIds are 12 bytes: 4 bytes representing the Unix timestamp seconds, 5 bytes of random process/machine value, and 3 bytes of an incrementing counter initialized randomly."
+  },
+  {
+    "question": "What happens when a capped collection reaches its maximum allocated storage size in bytes?",
+    "code": "db.createCollection('logs', { capped: true, size: 5242880, max: 5000 })",
+    "options": [
+      "It overwrites the oldest documents in a FIFO (First-In, First-Out) circular buffer fashion",
+      "It throws a DiskFullError and rejects all further writes",
+      "It archives oldest documents into a cold storage S3 bucket",
+      "It automatically allocates double the memory from the host"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Capped collections are fixed-size collections that maintain insertion order. When space is exhausted, MongoDB automatically overwrites the oldest entries."
+  },
+  {
+    "question": "What does a Write Concern of '{ w: 'majority', j: true }' guarantee before acknowledging a write?",
+    "options": [
+      "The write has been replicated to 100% of all replica set nodes in the cluster",
+      "The write has been committed to memory on a majority of replica set nodes AND written to the on-disk journal",
+      "The write was executed inside an ACID transaction without journal sync",
+      "The write has been verified by an independent Arbiter node"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "'w: majority' requires acknowledgement from a calculated majority of data-bearing voting members. 'j: true' guarantees the write has been flushed to the on-disk journal, ensuring durability across sudden crashes."
+  },
+  {
+    "question": "What aggregation pipeline stage deconstructs an array field from input documents to output a document for each element?",
+    "code": "db.articles.aggregate([\n  { $unwind: '$tags' }\n])",
+    "options": [
+      "$flatten",
+      "$split",
+      "$unwind",
+      "$expand"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "'$unwind' creates an individual document for each item in an array field, with non-array fields duplicated across the output documents."
+  },
+  {
+    "question": "When inspecting 'explain(\"executionStats\")' output, which stage indicates an optimal index-only query where no document bodies were read from disk?",
+    "options": [
+      "SORT_MERGE",
+      "COLLSCAN",
+      "FETCH without IXSCAN",
+      "IXSCAN with PROJECTION_COVERED (Covered Query)"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "A covered query satisfies both the filter criteria and all projected fields exclusively from the B-tree index (IXSCAN), skipping document reads (FETCH stage) entirely."
+  },
+  {
+    "question": "What MongoDB feature allows applications to subscribe to real-time data changes without polling the database?",
+    "code": "const changeStream = collection.watch();\nchangeStream.on('change', next => console.log(next));",
+    "options": [
+      "Change Streams (backed by the oplog)",
+      "Reactive Sockets",
+      "Database Triggers via Webhooks",
+      "MongoDB PubSub Broker"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Change Streams utilize the replica set oplog (operations log) to emit real-time change events (insert, update, delete, replace) to listening clients."
+  },
+  {
+    "question": "What does setting '{ upsert: true }' on 'updateOne()' accomplish?",
+    "code": "db.users.updateOne(\n  { email: 'dev@test.com' },\n  { $set: { lastLogin: new Date() } },\n  { upsert: true }\n)",
+    "options": [
+      "Forces an atomic rollback if multiple documents match the filter",
+      "Updates the matching document if found, or inserts a new document if no match exists",
+      "Updates all documents across all shards simultaneously",
+      "Overwrites existing document schemas without validation"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'upsert: true' updates the existing document if one matches the filter. If no document matches, MongoDB creates and inserts a new document merging the filter and update operators."
+  },
+  {
+    "question": "What is the role of an Arbiter in a MongoDB Replica Set?",
+    "options": [
+      "A background worker that runs nightly data compaction",
+      "A proxy that balances reads across secondary members",
+      "A lightweight member that participates in elections by voting, but holds no data and cannot become primary",
+      "A master node that writes the replication oplog"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Arbiters do not maintain a copy of the dataset and cannot become primary. Their sole purpose is to break vote ties in elections to maintain an odd quorum cheaply."
+  },
+  {
+    "question": "How do you project only specific fields while excluding the default '_id' field in MongoDB find queries?",
+    "code": "db.users.find({}, { name: 1, email: 1, _id: 0 })",
+    "options": [
+      "{ select: 'name email -_id' }",
+      "{ fields: ['name', 'email'], noId: true }",
+      "{ include: ['name', 'email'] }",
+      "{ name: 1, email: 1, _id: 0 }"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "In MongoDB projections, '_id' is included by default unless explicitly excluded using '_id: 0'. All other included fields are specified with ': 1'."
+  },
+  {
+    "question": "What is the primary purpose of MongoDB GridFS?",
+    "options": [
+      "Storing and retrieving files that exceed the 16 MB BSON document size limit by chunking them into multiple documents",
+      "Distributed file indexing for elastic search queries",
+      "A persistent distributed file system that mounts as an NFS drive",
+      "A memory-cached CDN integration for image delivery"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "GridFS divides files into chunks (typically 255 KB each) stored across two collections: 'fs.files' (metadata) and 'fs.chunks' (binary data), bypassing the 16 MB limit."
+  },
+  {
+    "question": "What happens if a MongoDB query executes without an index and results in a COLLSCAN?",
+    "options": [
+      "The engine throws an unindexed query exception",
+      "The engine performs a full collection scan, sequentially reading every document in the collection from storage",
+      "The query times out automatically after 500ms",
+      "The engine creates an in-memory temporary index before executing"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "A COLLSCAN (Collection Scan) reads every single document in the collection from disk into memory, resulting in high I/O and poor performance on large collections."
+  },
+  {
+    "question": "How do Multi-Document ACID Transactions operate in MongoDB?",
+    "code": "const session = client.startSession();\nsession.startTransaction();\ntry {\n  await coll1.insertOne({ x: 1 }, { session });\n  await coll2.insertOne({ y: 2 }, { session });\n  await session.commitTransaction();\n} catch (e) {\n  await session.abortTransaction();\n}",
+    "options": [
+      "Transactions lock the entire MongoDB database against read traffic",
+      "Transactions are initiated with a global SQL-style BEGIN TRANSACTION statement",
+      "Transactions are associated with a ClientSession and must be explicitly committed or aborted",
+      "Transactions can only operate within a single document"
+    ],
+    "correct": 2,
+    "difficulty": "Advanced",
+    "explanation": "MongoDB transactions run within a ClientSession across multiple operations, collections, and documents, offering all-or-nothing ACID guarantees across replica sets and sharded clusters."
+  },
+  {
+    "question": "Which operator performs an atomic field increment in MongoDB updates without reading the previous value?",
+    "code": "db.products.updateOne(\n  { _id: 101 },\n  { $inc: { viewCount: 1, stock: -1 } }\n)",
+    "options": [
+      "$increment",
+      "$plus",
+      "$add",
+      "$inc"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'$inc' atomically increments or decrements a field by a specified numeric amount without requiring a prior read, preventing race conditions under high concurrency."
   }
 ]

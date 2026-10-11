@@ -1,15 +1,256 @@
 [
   {
-    "question": "In Vue 3 Composition API, what is the key conceptual difference between ref() and reactive()?",
-    "code": "const count = ref(0)\nconst state = reactive({ count: 0 })",
+    "question": "What is the primary difference between 'ref' and 'reactive' in Vue 3's Composition API?",
     "options": [
-      "ref() accepts primitives and objects via a .value wrapper, while reactive() only takes objects with deep proxying",
-      "reactive() can only be used in Options API",
-      "ref() mutations do not trigger reactivity in template render",
-      "reactive() requires manual dependency tracking via watchEffect"
+      "'ref' wraps any value (including primitives) in an object with a '.value' property, while 'reactive' only accepts objects and creates a direct ES6 Proxy",
+      "'reactive' can only be used inside the Options API",
+      "'ref' mutates the DOM synchronously without batching",
+      "'ref' and 'reactive' are identical aliases"
+    ],
+    "correct": 0,
+    "difficulty": "Beginner",
+    "explanation": "'ref()' can take primitive or object types and exposes reactivity via the '.value' property. 'reactive()' only takes objects and returns an ES6 Proxy directly, though destructuring its properties loses reactivity."
+  },
+  {
+    "question": "Why does Vue 3 use ES6 Proxy for reactivity instead of Vue 2's 'Object.defineProperty'?",
+    "options": [
+      "Proxies run on a dedicated WebAssembly thread",
+      "Proxies intercept property addition, deletion, and array index mutations naturally without needing special helper methods like Vue.set()",
+      "Object.defineProperty was deprecated in modern web browsers",
+      "Proxies serialize state into localStorage automatically"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Vue 2 used 'Object.defineProperty', which could only track existing properties and failed to detect new property additions or direct array index assignments (e.g. 'arr[0] = val'). Vue 3 Proxies observe the entire target object."
+  },
+  {
+    "question": "What compiler macro is used inside '<script setup>' to define component props with full TypeScript types?",
+    "code": "<script setup lang=\"ts\">\nconst props = defineProps<{\n  title: string;\n  count?: number;\n}>();\n</script>",
+    "options": [
+      "createProps",
+      "useProps",
+      "defineProps",
+      "setProps"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'defineProps' is a compiler macro available inside '<script setup>'. It does not need to be imported and is resolved at compile time."
+  },
+  {
+    "question": "What is the difference between 'watch' and 'watchEffect' in Vue 3?",
+    "options": [
+      "'watch' cannot access previous values",
+      "'watchEffect' only runs when the component unmounts",
+      "'watch' executes on the server only, while 'watchEffect' is client-only",
+      "'watch' tracks explicitly specified sources lazily, while 'watchEffect' runs immediately and tracks every reactive dependency read during execution"
+    ],
+    "correct": 3,
+    "difficulty": "Intermediate",
+    "explanation": "'watch(source, callback)' is lazy by default and requires explicitly stating what reactive variables to observe. 'watchEffect(fn)' runs immediately upon creation and automatically re-executes whenever any reactive variable accessed inside 'fn' changes."
+  },
+  {
+    "question": "How do you destructure properties from a 'reactive' object without breaking their reactivity?",
+    "code": "const state = reactive({ count: 0, title: 'Test' });\nconst { count, title } = toRefs(state);",
+    "options": [
+      "Wrap the reactive object in 'toRefs(state)' before destructuring",
+      "Use JavaScript spread syntax: const { count } = { ...state }",
+      "Pass the object to Object.freeze()",
+      "Wrap each property in reactive()"
     ],
     "correct": 0,
     "difficulty": "Intermediate",
-    "explanation": "ref() wraps any value (including primitives) in a reactive object exposing .value, whereas reactive() directly proxies an object or collection."
+    "explanation": "Destructuring a 'reactive' object directly breaks reactivity because primitives are copied by value. 'toRefs(state)' converts each property of the reactive object into an individual 'ref' linked back to the source."
+  },
+  {
+    "question": "What is the key performance difference between 'v-if' and 'v-show' directives in Vue?",
+    "options": [
+      "'v-show' cannot be used with template elements or v-else",
+      "'v-if' completely mounts/unmounts DOM nodes and child components; 'v-show' always renders the element and toggles CSS 'display: none'",
+      "'v-if' has higher initial render cost if the condition is false",
+      "'v-show' removes event listeners when hidden"
+    ],
+    "correct": 1,
+    "difficulty": "Beginner",
+    "explanation": "'v-if' is conditional rendering: if false, the element and its children are never added to the DOM (or destroyed). 'v-show' always renders to the DOM, simply toggling 'display: none', making it ideal for frequent toggles."
+  },
+  {
+    "question": "What does the '<Teleport>' built-in component do in Vue 3?",
+    "code": "<Teleport to=\"body\">\n  <div class=\"modal\">Modal Content</div>\n</Teleport>",
+    "options": [
+      "Preloads remote component assets over the network",
+      "Animates the component smoothly across the screen",
+      "Renders its slot content into a different DOM node outside the component's parent hierarchy while maintaining component context",
+      "Converts HTML elements into an iframe"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'<Teleport to=\"#target\">' allows moving a component's template subtree into another physical DOM location (like 'body' for modals, popups, and tooltips) without losing component hierarchy."
+  },
+  {
+    "question": "How can you cache inactive component instances when toggling between dynamic components?",
+    "code": "<KeepAlive>\n  <component :is=\"activeTab\" />\n</KeepAlive>",
+    "options": [
+      "Set 'persist: true' on component options",
+      "Wrap them in '<Cache>'",
+      "Use 'v-memo' on the parent container",
+      "Wrap dynamic components in '<KeepAlive>'"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "'<KeepAlive>' caches inactive component instances in memory instead of destroying them, preserving their internal state and avoiding costly re-renders when switching tabs."
+  },
+  {
+    "question": "What does 'nextTick()' do in Vue?",
+    "code": "count.value++;\nawait nextTick();\n// DOM is updated here",
+    "options": [
+      "Returns a Promise that resolves immediately after Vue has completed updating the DOM following state changes",
+      "Delays execution by one second",
+      "Advances the browser requestAnimationFrame clock",
+      "Forces a garbage collection cycle"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "When you mutate reactive state in Vue, DOM updates are applied asynchronously in batches. 'nextTick()' waits for the pending DOM update cycle to complete before resolving."
+  },
+  {
+    "question": "How can you bind CSS styles directly to a reactive JavaScript variable in a Single File Component '<style>' block?",
+    "code": "<script setup>\nconst themeColor = ref('blue');\n</script>\n<style>\n.btn { color: v-bind(themeColor); }\n</style>",
+    "options": [
+      "Using standard CSS 'var(--themeColor)'",
+      "Using the 'v-bind()' CSS function inside <style>",
+      "Passing styles through the :style directive on every element",
+      "Injecting styles via document.documentElement.style"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Vue SFCs support the 'v-bind()' function inside '<style>' tags, linking CSS property values directly to dynamic component state via CSS custom properties."
+  },
+  {
+    "question": "What compiler macro exposes specific private properties or methods from a '<script setup>' component to parent components via template refs?",
+    "code": "<script setup>\nconst open = () => { ... };\ndefineExpose({ open });\n</script>",
+    "options": [
+      "defineEmits",
+      "exportPublic",
+      "defineExpose",
+      "exposeToParent"
+    ],
+    "correct": 2,
+    "difficulty": "Intermediate",
+    "explanation": "Components using '<script setup>' are closed by default; template refs will not expose internal methods unless explicitly passed through the 'defineExpose({...})' compiler macro."
+  },
+  {
+    "question": "Why is Pinia the officially recommended state management library for Vue 3 over Vuex?",
+    "options": [
+      "Pinia executes actions in parallel Web Workers",
+      "Pinia stores data directly in MySQL",
+      "Vuex is incompatible with Vue 3",
+      "Eliminates verbose mutations, provides direct state mutation, and offers seamless TypeScript type inference and modular store architecture"
+    ],
+    "correct": 3,
+    "difficulty": "Beginner",
+    "explanation": "Pinia removed redundant mutations (allowing actions to modify state directly), supports full TypeScript autocomplete out-of-the-box, supports multiple decoupled stores, and has a smaller footprint than Vuex."
+  },
+  {
+    "question": "How do you bind multiple separate 'v-model' properties with custom argument names on a single child component in Vue 3?",
+    "code": "<UserForm v-model:firstName=\"first\" v-model:lastName=\"last\" />",
+    "options": [
+      "v-model:argumentName=\"variable\"",
+      "v-model[argumentName]=\"variable\"",
+      "v-bind:model:argumentName=\"variable\"",
+      "v-model=\"{ first, last }\""
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "Vue 3 enables multiple 'v-model' bindings on a single component by appending argument names: 'v-model:firstName' corresponds to a 'firstName' prop and an 'update:firstName' emitted event."
+  },
+  {
+    "question": "What is the purpose of 'shallowRef()' in Vue 3?",
+    "code": "const largeDataset = shallowRef(hugeArray);",
+    "options": [
+      "Creates a temporary ref that is garbage-collected after 5 seconds",
+      "Tracks mutations to the '.value' reference itself, without recursively converting nested object properties into reactive proxies",
+      "Copies the ref into a web worker",
+      "Allows the ref to hold only string values"
+    ],
+    "correct": 1,
+    "difficulty": "Advanced",
+    "explanation": "'shallowRef()' is an optimization for massive data structures: only reassignment of '.value' triggers reactivity. Deep mutations inside the object are not tracked, eliminating massive proxy-wrapping overhead."
+  },
+  {
+    "question": "How does 'provide' and 'inject' enable dependency injection across components in Vue 3?",
+    "code": "// In ancestor component:\nprovide('theme', themeState);\n\n// In deep descendant component:\nconst theme = inject('theme');",
+    "options": [
+      "Loads external npm packages asynchronously",
+      "Shares state globally across all browser tabs via BroadcastChannel",
+      "Ancestor components 'provide' dependencies that any descendant in its sub-tree can 'inject', avoiding prop drilling",
+      "Injects database models into Vue templates"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'provide' and 'inject' allow an ancestor component to serve as a dependency provider for all its descendants, regardless of how deep the component hierarchy is, without prop drilling."
+  },
+  {
+    "question": "What is the difference between Navigation Guards 'beforeEach' and 'beforeResolve' in Vue Router?",
+    "options": [
+      "There is no difference; they are aliases",
+      "'beforeResolve' only runs on server-side rendering",
+      "'beforeEach' cannot redirect to other routes",
+      "'beforeEach' executes before any navigation starts; 'beforeResolve' executes right before navigation is confirmed, after in-component guards and async route components are resolved"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "'router.beforeEach' runs immediately upon navigation trigger. 'router.beforeResolve' is called just before navigation confirmation, after all in-component guards and asynchronous route components have finished loading."
+  },
+  {
+    "question": "What hook is invoked in a Vue 3 custom directive when the bound element's parent component and all of its children have mounted?",
+    "code": "const vFocus = {\n  mounted: (el) => el.focus()\n};",
+    "options": [
+      "mounted",
+      "created",
+      "beforeMount",
+      "updated"
+    ],
+    "correct": 0,
+    "difficulty": "Intermediate",
+    "explanation": "In Vue 3, custom directive lifecycle hooks align closely with component hooks: 'created', 'beforeMount', 'mounted', 'beforeUpdate', 'updated', 'beforeUnmount', and 'unmounted'."
+  },
+  {
+    "question": "How do Scoped Slots pass data from a child component back up to the parent slot template?",
+    "code": "<!-- Child: -->\n<slot :item=\"item\" :index=\"i\"></slot>\n\n<!-- Parent: -->\n<template #default=\"{ item, index }\">\n  <span>{{ item.name }}</span>\n</template>",
+    "options": [
+      "Calling $emit('slot-data', data)",
+      "Binding props to the '<slot>' element in the child and destructuring slot props in the parent with '#slotName=\"{ prop }\"'",
+      "Using inject('slot-data')",
+      "Returning values from the template render function"
+    ],
+    "correct": 1,
+    "difficulty": "Intermediate",
+    "explanation": "Scoped slots allow a child component to pass data to a slot by binding attributes on '<slot :data=\"data\">'. The parent accesses this data via '<template #default=\"slotProps\">'."
+  },
+  {
+    "question": "What is the effect of the 'v-once' directive on a rendered element?",
+    "code": "<span v-once>This will never change: {{ msg }}</span>",
+    "options": [
+      "Destroys the element after the first render",
+      "Limits click events on the element to a single click",
+      "Renders the element and its children only once, treating them as static content and skipping future updates",
+      "Renders the element exclusively during SSR"
+    ],
+    "correct": 2,
+    "difficulty": "Beginner",
+    "explanation": "'v-once' treats an element and its children as static content. On subsequent re-renders, the element is skipped completely, optimizing performance for content that never changes."
+  },
+  {
+    "question": "What does the 'v-memo' directive (introduced in Vue 3.2) optimize?",
+    "code": "<div v-memo=\"[item.id, selected === item.id]\">...</div>",
+    "options": [
+      "Pre-compiles child components into WebAssembly",
+      "Memoizes HTTP fetch requests in the browser cache",
+      "Caches computed property results in localStorage",
+      "Memoizes a sub-tree of the template, skipping Virtual DOM diffing completely if dependencies in the dependency array have not changed"
+    ],
+    "correct": 3,
+    "difficulty": "Advanced",
+    "explanation": "'v-memo' conditionally skips Virtual DOM creation and diffing for large lists or complex template fragments unless values in the provided array change, providing dramatic rendering speedups."
   }
 ]
